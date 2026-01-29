@@ -1,51 +1,62 @@
-library(rvest)
-library(httr2)
 library(dplyr)
+library(tidyr)
+library(stringr)
 
-# OpenAI -----------------------------------------------------------------------
+litellm_url <- "https://raw.githubusercontent.com/BerriAI/litellm/refs/heads/main/model_prices_and_context_window.json"
+litellm_prices <- jsonlite::read_json(litellm_url)
 
-# Can't download with httr2/rvest: {curl} doesn't support brotli encoding
-# Can't download with curl: as page requires javascript
-# Can't download with safari: saved page doesn't contain any content
-# So used ChatGPT with pasted HTML at
-# https://chatgpt.com/share/67ed88c3-3b10-8009-a4e5-b62fc99f3d26
+df <- tibble::enframe(litellm_prices, "model", "data")
 
-# https://platform.openai.com/docs/pricing
-openai <- readr::read_csv("data-raw/openai.csv")
-
-# Anthropic --------------------------------------------------------------------
-
-# Same problem as OpenAI website so do it BY FUCKING HAND
-
-# https://www.anthropic.com/pricing
+all_prices <- df |>
+  filter(model != "sample_spec") |>
+  unnest_wider(data) |>
+  select(
+    provider = "litellm_provider",
+    model,
+    starts_with("input_cost_per_token"),
+    starts_with("output_cost_per_token"),
+    starts_with("cache_read_input_token_cost")
+  ) |>
+  rename_with(\(x) {
+    x |>
+      str_replace("input_cost_per_token", "input") |>
+      str_replace("output_cost_per_token", "output") |>
+      str_replace("cache_read_input_token_cost", "cached_input")
+  }) |>
+  pivot_longer(
+    !(provider:model),
+    names_to = c(".value", "variant"),
+    names_pattern = "(input|output|cached_input)_?(.*)",
+    values_drop_na = TRUE
+  ) |>
+  arrange(provider, model, variant) |>
+  mutate(
+    input = input * 1e6,
+    output = output * 1e6,
+    cached_input = cached_input * 1e6,
+    model = stringr::str_remove(model, paste0(provider, "/"))
+  ) |>
+  filter(input > 0 | output > 0)
+all_prices |> count(provider, sort = TRUE)
 
 # fmt: skip
-anthropic <- tribble(
-  ~model, ~cached_input, ~input, ~output,
-  "claude-opus-4",1.50,15,75,
-  "claude-sonnet-4",0.3,3,15,
-  "claude-3-7-sonnet",0.3,3,15,
-  "claude-3-5-sonnet",0.3,3,15,
-  "claude-3-5-haiku",0.08,0.80,4,
-  "claude-3-opus",1.5,15,75,
-  "claude-3-haiku",0.03,0.25,1.25
+provider_lookup <- tribble(
+  ~litellm_provider, ~provider,
+  "openai", "OpenAI",
+  "anthropic", "Anthropic",
+  "gemini", "Google/Gemini",
+  "vertex_ai-language-models", "Google/Vertex",
+  "openrouter", "OpenRouter",
+  "azure", "Azure/OpenAI",
+  "bedrock", "AWS/Bedrock",
+  "mistral", "Mistral",
 )
 
-# Gemini -----------------------------------------------------------------------
+prices <- all_prices |>
+  inner_join(provider_lookup, join_by(provider == litellm_provider)) |>
+  mutate(provider = provider.y, provider.y = NULL)
 
-# fmt: skip
-gemini <- tribble(
-  ~model, ~cached_input, ~input, ~output,
-  "gemini-2.0-flash",0.025,0.10,0.40,
-  "gemini-2.0-flash-lite",NA,0.075,0.30,
-  "gemini-1.5-flash",NA,0.3,0.075
-)
-
-prices <- bind_rows(
-  openai |> mutate(provider = "OpenAI", .before = 1),
-  anthropic |> mutate(provider = "Anthropic"),
-  gemini |> mutate(provider = "Google/Gemini")
-)
+# prices |> View()
 
 usethis::use_data(prices, overwrite = TRUE, internal = TRUE)
 

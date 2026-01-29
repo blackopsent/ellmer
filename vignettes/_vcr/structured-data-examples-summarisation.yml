@@ -1,9 +1,9 @@
 http_interactions:
 - request:
     method: POST
-    uri: https://api.openai.com/v1/chat/completions
+    uri: https://api.openai.com/v1/responses
     body:
-      string: '{"messages":[{"role":"user","content":[{"type":"text","text":"Policy\n\nThird-party
+      string: '{"input":[{"role":"user","content":[{"type":"input_text","text":"Policy\n\nThird-party
         testing as a key ingredient of AI policy\n\nMar 25, 2024●18 min read\n\n\n\nWe
         believe that the AI sector needs effective third-party testing for frontier
         AI systems. Developing a testing regime and associated policy interventions
@@ -300,81 +300,154 @@ http_interactions:
         If you were able to develop technology that made it very hard to fine-tune
         an AI model away from its original capability distribution, then it’d be easier
         to confidently release models without potentially compromising on downstream
-        safety."}]}],"model":"gpt-4.1","stream":false,"response_format":{"type":"json_schema","json_schema":{"name":"structured_data","schema":{"type":"object","description":"","properties":{"wrapper":{"type":"object","description":"Summary
+        safety."}]}],"model":"gpt-4.1","stream":false,"text":{"format":{"type":"json_schema","name":"structured_data","schema":{"type":"object","description":"Summary
         of the article.","properties":{"author":{"type":"string","description":"Name
         of the article author"},"topics":{"type":"array","description":"Array of topics,
         e.g. [\"tech\", \"politics\"]. Should be as specific as possible, and can
         overlap.","items":{"type":"string","description":""}},"summary":{"type":"string","description":"Summary
         of the article. One or two paragraphs max"},"coherence":{"type":"integer","description":"Coherence
         of the article''s key points, 0-100 (inclusive)"},"persuasion":{"type":"number","description":"Article''s
-        persuasion score, 0.0-1.0 (inclusive)"}},"required":["author","topics","summary","coherence","persuasion"],"additionalProperties":false}},"required":["wrapper"],"additionalProperties":false},"strict":true}}}'
+        persuasion score, 0.0-1.0 (inclusive)"}},"required":["author","topics","summary","coherence","persuasion"],"additionalProperties":false},"strict":true}},"store":false,"service_tier":"auto"}'
   response:
     status: 200
     headers:
-      access-control-expose-headers: X-Request-ID
       alt-svc: h3=":443"; ma=86400
       cf-cache-status: DYNAMIC
-      cf-ray: 9564fc260fec8d27-DFW
+      cf-ray: 999eeddb1c243458-DFW
       content-encoding: gzip
       content-type: application/json
-      date: Fri, 27 Jun 2025 12:35:38 GMT
-      openai-organization: user-wfrajlxs4zxa4ixjljhmt9vx
-      openai-processing-ms: '4927'
+      date: Wed, 05 Nov 2025 19:59:07 GMT
+      openai-organization: posit-esfrkf
+      openai-processing-ms: '6975'
+      openai-project: proj_IeWhBnzvOO8wbVR5MdxnGXFq
       openai-version: '2020-10-01'
       server: cloudflare
       set-cookie:
-      - __cf_bm=fUzWIJ0hjDYRk.gXbhVvVgmEb_Hglo6MClGUWFqEOeo-1751027738-1.0.1.1-4V._E751Fnq8dbukH853sOdlg29f0dAPEWCyIu9O.0QTKuJ3NOvj4.40Ef9TjiBGmH.u7lowmwtR6L3QN0NMpU9YqVr0D.x0JZ.qYWuuaLg;
-        path=/; expires=Fri, 27-Jun-25 13:05:38 GMT; domain=.api.openai.com; HttpOnly;
+      - __cf_bm=Ja8_fJq2KgdeS_2yI3JMkmo2.6WVWKVFx_w0F9SqfRE-1762372747-1.0.1.1-xdMA.8jpv46jAvPsX4I_5tgxbcuvQcxrVMNuSHHKKAAtINy9dcjDtMlfd8lrQhhPCJnc2LpvuD4iO_b7SBHPW2RcEAwE6JmQz_Js7zwKsmk;
+        path=/; expires=Wed, 05-Nov-25 20:29:07 GMT; domain=.api.openai.com; HttpOnly;
         Secure; SameSite=None
-      - _cfuvid=oYswJhzy7IBwDhQFZdKstXqzZs_8m0IhWWgyEEHSwVE-1751027738434-0.0.1.1-604800000;
+      - _cfuvid=SSFsqvlfBE50oaju0l7ik9Mdzeupir6xBk7OmUEGRek-1762372747434-0.0.1.1-604800000;
         path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '4939'
+      x-envoy-upstream-service-time: '6985'
       x-ratelimit-limit-requests: '10000'
       x-ratelimit-limit-tokens: '30000000'
       x-ratelimit-remaining-requests: '9999'
-      x-ratelimit-remaining-tokens: '29994291'
+      x-ratelimit-remaining-tokens: '29995645'
       x-ratelimit-reset-requests: 6ms
-      x-ratelimit-reset-tokens: 11ms
-      x-request-id: req_74d3c7050678ff1b8fe9a3ee0b87bd35
+      x-ratelimit-reset-tokens: 8ms
+      x-request-id: req_7dd5de3797984fefbe90ab10fd46188e
     body:
-      string: |
+      string: |-
         {
-          "id": "chatcmpl-Bn2ajkLZJYeLLdE5CAFDql96AR68v",
-          "object": "chat.completion",
-          "created": 1751027733,
+          "id": "resp_02c50cd5f5328e4501690bac8476148195b9265c304ca01e15",
+          "object": "response",
+          "created_at": 1762372740,
+          "status": "completed",
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "error": null,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
           "model": "gpt-4.1-2025-04-14",
-          "choices": [
+          "output": [
             {
-              "index": 0,
-              "message": {
-                "role": "assistant",
-                "content": "{\"wrapper\":{\"author\":\"Anthropic Policy Team\",\"topics\":[\"AI policy\",\"third-party testing\",\"AI safety\",\"regulation\",\"national security\",\"open-source AI\",\"regulatory capture\",\"responsible scaling\",\"government funding\",\"product safety\",\"AI risk management\"],\"summary\":\"The article advocates for a robust third-party testing regime as the cornerstone of effective AI policy, particularly for 'frontier' generative AI models that have broad capabilities and potential for misuse. It argues that such models do not fit existing sector-specific regulatory frameworks and pose significant risks—including threats to election integrity, national security, and discriminatory behaviors. The article provides a thorough overview of what an effective testing regime should include: trustworthy and effective tests, legitimate and capable third-party auditors, clear standards co-developed by industry, government, and academia, and a focus on a small subset of the most capable AI models to avoid stifling innovation among smaller actors. It makes the case that self-governance by private companies is insufficient, and coordination among multiple stakeholders is needed to instill public trust and prevent both major incidents and overbearing regulation.\\n\\nIt also addresses policy complexities around open-source models and the risks of regulatory capture by large tech firms, stressing that third-party testing helps keep the ecosystem competitive and trusted. The article details Anthropic’s responsible scaling policies, ongoing public advocacy (such as for more government funding for AI oversight), recommendations for national research infrastructure, and the need for careful, minimal regulatory interventions. It concludes that building a diverse, broadly-accepted third-party testing ecosystem is essential for the responsible development and societal oversight of AI systems, and welcomes public critique and collaboration on these ideas.\",\"coherence\":95,\"persuasion\":0.87}}",
-                "refusal": null,
-                "annotations": []
-              },
-              "logprobs": null,
-              "finish_reason": "stop"
+              "id": "msg_02c50cd5f5328e4501690bac86fda481958215eb1a6417ccef",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\n  \"author\": \"Anthropic Policy Team (implied, no explicit author)\",\n  \"topics\": [\n    \"AI safety\",\n    \"AI policy\",\n    \"third-party testing\",\n    \"regulation\",\n    \"AI governance\",\n    \"open-source AI\",\n    \"regulatory capture\",\n    \"AI oversight\",\n    \"national security\",\n    \"responsible AI scaling\",\n    \"risk management\"\n  ],\n  \"summary\": \"This article by Anthropic argues that the development and deployment of large-scale generative AI systems, such as their own Claude, require robust third-party testing regimes to ensure safety and build public trust. The authors assert that self-governance and internal testing\u2014while important\u2014are insufficient for the sector as a whole, and draw parallels to product safety standards in industries like food, medicine, and aerospace. They argue for a regime involving effective, broadly-trusted safety tests administered by legitimate third-parties, such as independent companies, academic institutions, and government agencies.\\n\\nKey elements of this vision include requiring only the most powerful and potentially risky models to undergo such tests, coordinating international standards, and focusing resources on national security and other high-stakes domains. The article stresses the need to balance robust safety assurance with not overburdening small companies, avoiding regulatory capture, and maintaining innovation. It discusses the tensions around open-source AI and advocates for a 'minimal viable policy approach' that is both practical and enables feedback. Anthropic highlights ongoing activities to support effective third-party testing and sees this approach as central to advancing societal oversight and preventing both deliberate and accidental harm from AI.\",\n  \"coherence\": 93,\n  \"persuasion\": 0.88\n}"
+                }
+              ],
+              "role": "assistant"
             }
           ],
-          "usage": {
-            "prompt_tokens": 4354,
-            "completion_tokens": 344,
-            "total_tokens": 4698,
-            "prompt_tokens_details": {
-              "cached_tokens": 0,
-              "audio_tokens": 0
-            },
-            "completion_tokens_details": {
-              "reasoning_tokens": 0,
-              "audio_tokens": 0,
-              "accepted_prediction_tokens": 0,
-              "rejected_prediction_tokens": 0
-            }
+          "parallel_tool_calls": true,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": null,
+          "reasoning": {
+            "effort": null,
+            "summary": null
           },
+          "safety_identifier": null,
           "service_tier": "default",
-          "system_fingerprint": "fp_51e1070cf2"
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "json_schema",
+              "description": null,
+              "name": "structured_data",
+              "schema": {
+                "type": "object",
+                "description": "Summary of the article.",
+                "properties": {
+                  "author": {
+                    "type": "string",
+                    "description": "Name of the article author"
+                  },
+                  "topics": {
+                    "type": "array",
+                    "description": "Array of topics, e.g. [\"tech\", \"politics\"]. Should be as specific as possible, and can overlap.",
+                    "items": {
+                      "type": "string",
+                      "description": ""
+                    }
+                  },
+                  "summary": {
+                    "type": "string",
+                    "description": "Summary of the article. One or two paragraphs max"
+                  },
+                  "coherence": {
+                    "type": "integer",
+                    "description": "Coherence of the article's key points, 0-100 (inclusive)"
+                  },
+                  "persuasion": {
+                    "type": "number",
+                    "description": "Article's persuasion score, 0.0-1.0 (inclusive)"
+                  }
+                },
+                "required": [
+                  "author",
+                  "topics",
+                  "summary",
+                  "coherence",
+                  "persuasion"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 4336,
+            "input_tokens_details": {
+              "cached_tokens": 0
+            },
+            "output_tokens": 346,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 4682
+          },
+          "user": null,
+          "metadata": {}
         }
-  recorded_at: 2025-06-27 12:35:38
-recorded_with: VCR-vcr/1.7.0.91, webmockr/2.1.0
+  recorded_at: 2025-11-05 19:59:07
+recorded_with: VCR-vcr/2.0.0

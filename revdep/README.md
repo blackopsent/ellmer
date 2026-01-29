@@ -4,5 +4,5 @@
 
 |package |version |error  |warning |note |
 |:-------|:-------|:------|:-------|:----|
-|[GitAI](problems.md#gitai)|0.1.0   |__+1__ |        |     |
+|[GitAI](problems.md#gitai)|0.1.2   |__+1__ |        |     |
 

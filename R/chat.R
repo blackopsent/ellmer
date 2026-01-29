@@ -1,7 +1,7 @@
 #' @include utils-coro.R
 NULL
 
-#' A chat
+#' The Chat object
 #'
 #' @description
 #' A `Chat` is a sequence of user and assistant [Turn]s sent
@@ -50,7 +50,7 @@ Chat <- R6::R6Class(
         return(private$.turns)
       }
 
-      if (!include_system_prompt && is_system_prompt(private$.turns[[1]])) {
+      if (!include_system_prompt && is_system_turn(private$.turns[[1]])) {
         private$.turns[-1]
       } else {
         private$.turns
@@ -70,13 +70,19 @@ Chat <- R6::R6Class(
 
     #' @description Add a pair of turns to the chat.
     #' @param user The user [Turn].
-    #' @param system The system [Turn].
-    add_turn = function(user, system) {
+    #' @param assistant The system [Turn].
+    #' @param log_tokens Should tokens used in the turn be logged to the
+    #'   session counter?
+    add_turn = function(user, assistant, log_tokens = TRUE) {
       check_turn(user)
-      check_turn(system)
+      check_turn(assistant)
+
+      if (log_tokens) {
+        log_turn(private$provider, assistant)
+      }
 
       private$.turns[[length(private$.turns) + 1]] <- user
-      private$.turns[[length(private$.turns) + 1]] <- system
+      private$.turns[[length(private$.turns) + 1]] <- assistant
       invisible(self)
     },
 
@@ -108,53 +114,35 @@ Chat <- R6::R6Class(
       }
       # Add prompt, if new
       if (is.character(value)) {
-        system_turn <- Turn("system", value)
+        system_turn <- SystemTurn(value)
         private$.turns <- c(list(system_turn), private$.turns)
       }
       invisible(self)
     },
 
-    #' @description A data frame with a `tokens` column that proides the
-    #'   number of input tokens used by user turns and the number of
-    #'   output tokens used by assistant turns.
-    #' @param include_system_prompt Whether to include the system prompt in
-    #'   the turns (if any exists).
-    get_tokens = function(include_system_prompt = FALSE) {
-      turns <- self$get_turns(include_system_prompt = FALSE)
-      assistant_turns <- keep(turns, function(x) x@role == "assistant")
-
-      n <- length(assistant_turns)
-      tokens_acc <- t(vapply(
-        assistant_turns,
-        function(turn) turn@tokens,
-        double(2)
-      ))
-
-      tokens <- tokens_acc
-      if (n > 1) {
-        # Compute just the new tokens
-        tokens[-1, 1] <- tokens[seq(2, n), 1] -
-          (tokens[seq(1, n - 1), 1] + tokens[seq(1, n - 1), 2])
-      }
-      # collapse into a single vector
-      tokens_v <- c(t(tokens))
-      tokens_acc_v <- c(t(tokens_acc))
-
-      tokens_df <- data.frame(
-        role = rep(c("user", "assistant"), times = n),
-        tokens = tokens_v,
-        tokens_total = tokens_acc_v
-      )
-
-      if (include_system_prompt && private$has_system_prompt()) {
-        # How do we compute this?
-        tokens_df <- rbind(
-          data.frame(role = "system", tokens = 0, tokens_total = 0),
-          tokens_df
+    #' @description A data frame with token usage and cost data. There are four
+    #'   columns: `input`, `output`, `cached_input`, and `cost`. There is one
+    #'   row for each assistant turn, because token counts and costs are only
+    #'   available when the API returns the assistant's response.
+    #' @param include_system_prompt `r lifecycle::badge("deprecated")`
+    get_tokens = function(include_system_prompt = deprecated()) {
+      if (lifecycle::is_present(include_system_prompt)) {
+        lifecycle::deprecate_warn(
+          "0.4.0",
+          "get_tokens(include_system_prompt)",
+          "get_tokens()"
         )
       }
 
-      tokens_df
+      turns <- self$get_turns()
+      assistant_turns <- keep(turns, is_assistant_turn)
+      tokens <- map_tokens(assistant_turns, \(turn) turn@tokens)
+      tokens <- tibble::as_tibble(tokens)
+      tokens$cost <- dollars(map_dbl(assistant_turns, \(turn) turn@cost))
+
+      user_turns <- keep(turns, is_user_turn)
+      tokens$input_preview <- map_chr(user_turns, turn_contents_preview)
+      tokens
     },
 
     #' @description The cost of this chat
@@ -164,20 +152,20 @@ Chat <- R6::R6Class(
     get_cost = function(include = c("all", "last")) {
       include <- arg_match(include)
 
-      turns <- self$get_turns(include_system_prompt = FALSE)
-      assistant_turns <- keep(turns, function(x) x@role == "assistant")
-      n <- length(assistant_turns)
-      tokens <- t(vapply(
-        assistant_turns,
-        function(turn) turn@tokens,
-        double(2)
-      ))
+      turns <- self$get_turns()
+      assistant_turns <- keep(turns, is_assistant_turn)
 
-      if (include == "last") {
-        tokens <- tokens[nrow(tokens), , drop = FALSE]
+      if (length(assistant_turns) == 0) {
+        return(dollars(0))
       }
 
-      private$compute_cost(input = sum(tokens[, 1]), output = sum(tokens[, 2]))
+      if (include == "last") {
+        cost <- assistant_turns[[length(assistant_turns)]]@cost
+      } else {
+        cost <- sum(map_dbl(assistant_turns, \(turn) turn@cost))
+      }
+
+      dollars(cost)
     },
 
     #' @description The last turn returned by the assistant.
@@ -205,7 +193,9 @@ Chat <- R6::R6Class(
     #'   `NULL`, then the value of `echo` set when the chat object was created
     #'   will be used.
     chat = function(..., echo = NULL) {
-      turn <- user_turn(...)
+      finish_tools <- private$complete_dangling_tool_requests()
+
+      turn <- user_turn(!!!finish_tools, ...)
       echo <- check_echo(echo %||% private$echo)
 
       # Returns a single turn (the final response from the assistant), even if
@@ -221,22 +211,25 @@ Chat <- R6::R6Class(
     },
 
     #' @description Extract structured data
-    #' @param ... The input to send to the chatbot. Will typically include
-    #'   the phrase "extract structured data".
+    #' @param ... The input to send to the chatbot. This is typically the text
+    #'   you want to extract data from, but it can be omitted if the data is
+    #'   obvious from the existing conversation.
     #' @param type A type specification for the extracted data. Should be
     #'   created with a [`type_()`][type_boolean] function.
     #' @param echo Whether to emit the response to stdout as it is received.
     #'   Set to "text" to stream JSON data as it's generated (not supported by
-    #'  all providers).
+    #'   all providers).
     #' @param convert Automatically convert from JSON lists to R data types
     #'   using the schema. For example, this will turn arrays of objects into
-    #'  data frames and arrays of strings into a character vector.
+    #'   data frames and arrays of strings into a character vector.
     chat_structured = function(..., type, echo = "none", convert = TRUE) {
-      turn <- user_turn(...)
+      finish_tools <- private$complete_dangling_tool_requests()
+
+      turn <- user_turn(!!!finish_tools, ..., .check_empty = FALSE)
       echo <- check_echo(echo %||% private$echo)
       check_bool(convert)
 
-      needs_wrapper <- S7_inherits(private$provider, ProviderOpenAI)
+      needs_wrapper <- type_needs_wrapper(type, private$provider)
       type <- wrap_type_if_needed(type, needs_wrapper)
 
       coro::collect(private$submit_turns(
@@ -258,10 +251,19 @@ Chat <- R6::R6Class(
     #'   created with a [`type_()`][type_boolean] function.
     #' @param echo Whether to emit the response to stdout as it is received.
     #'   Set to "text" to stream JSON data as it's generated (not supported by
-    #'  all providers).
-    chat_structured_async = function(..., type, echo = "none") {
-      turn <- user_turn(...)
+    #'   all providers).
+    #' @param convert Automatically convert from JSON lists to R data types
+    #'   using the schema. For example, this will turn arrays of objects into
+    #'   data frames and arrays of strings into a character vector.
+    chat_structured_async = function(..., type, echo = "none", convert = TRUE) {
+      finish_tools <- private$complete_dangling_tool_requests()
+
+      turn <- user_turn(!!!finish_tools, ..., .check_empty = FALSE)
       echo <- check_echo(echo %||% private$echo)
+      check_bool(convert)
+
+      needs_wrapper <- type_needs_wrapper(type, private$provider)
+      type <- wrap_type_if_needed(type, needs_wrapper)
 
       done <- coro::async_collect(private$submit_turns_async(
         turn,
@@ -269,16 +271,15 @@ Chat <- R6::R6Class(
         stream = echo != "none",
         echo = echo
       ))
+
       promises::then(done, function(dummy) {
         turn <- self$last_turn()
-        is_json <- map_lgl(turn@contents, S7_inherits, ContentJson)
-        n <- sum(is_json)
-        if (n != 1) {
-          cli::cli_abort("Data extraction failed: {n} data results recieved.")
-        }
-
-        json <- turn@contents[[which(is_json)]]
-        json@value
+        extract_data(
+          turn,
+          type,
+          convert = convert,
+          needs_wrapper = needs_wrapper
+        )
       })
     },
 
@@ -292,7 +293,9 @@ Chat <- R6::R6Class(
     #'   an interactive user interface. Concurrent mode is the default and is
     #'   best suited for automated scripts or non-interactive applications.
     chat_async = function(..., tool_mode = c("concurrent", "sequential")) {
-      turn <- user_turn(...)
+      finish_tools <- private$complete_dangling_tool_requests()
+
+      turn <- user_turn(!!!finish_tools, ...)
       tool_mode <- arg_match(tool_mode)
 
       # Returns a single turn (the final response from the assistant), even if
@@ -320,7 +323,9 @@ Chat <- R6::R6Class(
     #'   rich content types. When `stream = "content"`, `stream()` yields
     #'   [Content] objects.
     stream = function(..., stream = c("text", "content")) {
-      turn <- user_turn(...)
+      finish_tools <- private$complete_dangling_tool_requests()
+
+      turn <- user_turn(!!!finish_tools, ...)
       stream <- arg_match(stream)
       private$chat_impl(
         turn,
@@ -348,7 +353,9 @@ Chat <- R6::R6Class(
       tool_mode = c("concurrent", "sequential"),
       stream = c("text", "content")
     ) {
-      turn <- user_turn(...)
+      finish_tools <- private$complete_dangling_tool_requests()
+
+      turn <- user_turn(!!!finish_tools, ...)
       tool_mode <- arg_match(tool_mode)
       stream <- arg_match(stream)
       private$chat_impl_async(
@@ -364,8 +371,9 @@ Chat <- R6::R6Class(
     #'   Learn more in `vignette("tool-calling")`.
     #' @param tool A tool definition created by [tool()].
     register_tool = function(tool) {
-      if (!S7_inherits(tool, ToolDef)) {
-        cli::cli_abort("{.arg tool} must be a <ToolDef>.")
+      check_tool(tool)
+      if (has_name(private$tools, tool@name)) {
+        cli::cli_inform("Replacing existing {tool@name} tool.")
       }
 
       private$tools[[tool@name]] <- tool
@@ -376,18 +384,12 @@ Chat <- R6::R6Class(
     #'   Learn more in `vignette("tool-calling")`.
     #' @param tools A list of tool definitions created by [tool()].
     register_tools = function(tools) {
-      if (!is_list(tools)) {
-        stop_input_type(tools, "a list")
-      }
-      for (i in seq_along(tools)) {
-        if (!S7_inherits(tools[[i]], ToolDef)) {
-          arg <- paste0("tools[[", i, "]]")
-          stop_input_type(tools[[i]], "a <ToolDef>", arg = arg)
-        }
-      }
+      check_tools(tools)
+
       for (tool in tools) {
         self$register_tool(tool)
       }
+      invisible(self)
     },
 
     #' @description Get the underlying provider object. For expert use only.
@@ -405,20 +407,12 @@ Chat <- R6::R6Class(
     #'
     #' @param tools A list of tool definitions created with [ellmer::tool()].
     set_tools = function(tools) {
-      if (!is_list(tools) || !all(map_lgl(tools, S7_inherits, ToolDef))) {
-        msg <- "{.arg tools} must be a list of tools created with {.fn ellmer::tool}."
-        if (S7_inherits(tools, ToolDef)) {
-          msg <- c(msg, "i" = "Did you mean to call {.code $register_tool()}?")
-        }
-        cli::cli_abort(msg)
-      }
+      check_tools(tools)
 
       private$tools <- list()
-
       for (tool_def in tools) {
         self$register_tool(tool_def)
       }
-
       invisible(self)
     },
 
@@ -440,30 +434,6 @@ Chat <- R6::R6Class(
     #' @return A function that can be called to remove the callback.
     on_tool_result = function(callback) {
       private$callback_on_tool_result$add(callback)
-    },
-
-    #' @description `r lifecycle::badge("deprecated")`
-    #' Deprecated in favour of `$chat_structured()`.
-    #' @param ... See `$chat_structured()`
-    extract_data = function(...) {
-      lifecycle::deprecate_warn(
-        "0.2.0",
-        "Chat$extract_data()",
-        "Chat$chat_structured()"
-      )
-      self$chat_structured(...)
-    },
-
-    #' @description `r lifecycle::badge("deprecated")`
-    # '  Deprecated in favour of `$chat_structured_async()`.
-    #' @param ... See `$chat_structured_async()`
-    extract_data_async = function(...) {
-      lifecycle::deprecate_warn(
-        "0.2.0",
-        "Chat$extract_data_async()",
-        "Chat$chat_structured_async()"
-      )
-      self$chat_structured_async(...)
     }
   ),
   private = list(
@@ -474,25 +444,6 @@ Chat <- R6::R6Class(
     tools = list(),
     callback_on_tool_request = NULL,
     callback_on_tool_result = NULL,
-
-    add_user_contents = function(contents) {
-      stopifnot(is.list(contents))
-      if (length(contents) == 0) {
-        return(invisible(self))
-      }
-
-      i <- length(private$.turns)
-
-      if (private$.turns[[i]]@role != "user") {
-        private$.turns[[i + 1]] <- Turn("user", contents)
-      } else {
-        private$.turns[[i]]@contents <- c(
-          private$.turns[[i]]@contents,
-          contents
-        )
-      }
-      invisible(self)
-    },
 
     # If stream = TRUE, yields completion deltas. If stream = FALSE, yields
     # complete assistant turns.
@@ -646,7 +597,7 @@ Chat <- R6::R6Class(
         provider = private$provider,
         mode = if (stream) "stream" else "value",
         turns = c(private$.turns, list(user_turn)),
-        tools = private$tools,
+        tools = if (is.null(type)) private$tools,
         type = type
       )
       emit <- emitter(echo)
@@ -655,14 +606,11 @@ Chat <- R6::R6Class(
       if (stream) {
         result <- NULL
         for (chunk in response) {
-          text <- stream_text(private$provider, chunk)
-          if (!is.null(text)) {
+          content <- stream_content(private$provider, chunk)
+          if (!is.null(content)) {
+            text <- content_text(content)
             emit(text)
-            if (yield_as_content) {
-              yield(ContentText(text))
-            } else {
-              yield(text)
-            }
+            yield(if (yield_as_content) content else text)
             any_text <- TRUE
           }
 
@@ -673,9 +621,10 @@ Chat <- R6::R6Class(
       } else {
         turn <- value_turn(
           private$provider,
-          response,
+          resp_body_json(response),
           has_type = !is.null(type)
         )
+        turn@duration <- resp_timing(response)[["total"]] %||% NA_real_
         turn <- match_tools(turn, private$tools)
 
         text <- turn@text
@@ -727,7 +676,7 @@ Chat <- R6::R6Class(
         provider = private$provider,
         mode = if (stream) "async-stream" else "async-value",
         turns = c(private$.turns, list(user_turn)),
-        tools = private$tools,
+        tools = if (is.null(type)) private$tools,
         type = type
       )
       emit <- emitter(echo)
@@ -736,14 +685,11 @@ Chat <- R6::R6Class(
       if (stream) {
         result <- NULL
         for (chunk in await_each(response)) {
-          text <- stream_text(private$provider, chunk)
-          if (!is.null(text)) {
+          content <- stream_content(private$provider, chunk)
+          if (!is.null(content)) {
+            text <- content_text(content)
             emit(text)
-            if (yield_as_content) {
-              yield(ContentText(text))
-            } else {
-              yield(text)
-            }
+            yield(if (yield_as_content) content else text)
             any_text <- TRUE
           }
 
@@ -753,7 +699,12 @@ Chat <- R6::R6Class(
       } else {
         result <- await(response)
 
-        turn <- value_turn(private$provider, result, has_type = !is.null(type))
+        turn <- value_turn(
+          private$provider,
+          resp_body_json(result),
+          has_type = !is.null(type)
+        )
+        turn@duration <- resp_timing(result)[["total"]] %||% NA_real_
         text <- turn@text
         if (!is.null(text)) {
           emit(text)
@@ -789,68 +740,81 @@ Chat <- R6::R6Class(
     }),
 
     has_system_prompt = function() {
-      length(private$.turns) > 0 && private$.turns[[1]]@role == "system"
+      length(private$.turns) > 0 && is_system_turn(private$.turns[[1]])
     },
 
-    compute_cost = function(input, output) {
-      get_token_cost(
-        private$provider@name,
-        standardise_model(private$provider, private$provider@model),
-        input = input,
-        output = output
-      )
+    complete_dangling_tool_requests = function() {
+      if (length(private$.turns) == 0) {
+        return(NULL)
+      }
+
+      last_turn <- private$.turns[[length(private$.turns)]]
+      if (last_turn@role != "assistant") {
+        return(NULL)
+      }
+
+      tool_requests <- keep(last_turn@contents, is_tool_request)
+      if (length(tool_requests) == 0) {
+        return(NULL)
+      }
+
+      lapply(tool_requests, function(req) {
+        ContentToolResult(
+          error = "Chat ended before the tool could be invoked.",
+          request = req
+        )
+      })
     }
   )
 )
-
-is_chat <- function(x) {
-  inherits(x, "Chat")
-}
-
-
-check_chat <- function(chat, call = caller_env()) {
-  if (is_chat(chat)) {
-    return(invisible())
-  }
-
-  cli::cli_abort("{.arg chat} must be a <Chat> object.", call = call)
-}
 
 #' @export
 print.Chat <- function(x, ...) {
   provider <- x$get_provider()
   turns <- x$get_turns(include_system_prompt = TRUE)
 
-  tokens <- x$get_tokens(include_system_prompt = TRUE)
-
-  tokens_user <- sum(tokens$tokens_total[tokens$role == "user"])
-  tokens_assistant <- sum(tokens$tokens_total[tokens$role == "assistant"])
-  cost <- x$get_cost()
+  assistant_turns <- keep(turns, \(x) x@role == "assistant")
+  total_tokens <- colSums(map_tokens(assistant_turns, \(x) x@tokens))
+  total_cost <- sum(map_dbl(assistant_turns, \(x) x@cost))
 
   cat(paste_c(
     "<Chat",
     c(" ", provider@name, "/", provider@model),
     c(" turns=", length(turns)),
-    c(
-      " tokens=",
-      tokens_user,
-      "/",
-      tokens_assistant
-    ),
-    if (!is.na(cost)) c(" ", format(cost)),
+    turn_cost(total_tokens, total_cost, prefix = " "),
     ">\n"
   ))
 
   for (i in seq_along(turns)) {
     turn <- turns[[i]]
+    if (turn@role == "assistant") {
+      cost <- turn_cost(turn@tokens, turn@cost, prefix = " [", suffix = "]")
+    } else {
+      cost <- ""
+    }
 
-    cli::cat_rule(cli::format_inline(
-      "{color_role(turn@role)} [{tokens$tokens[[i]]}]"
-    ))
+    cli::cat_rule(cli::format_inline("{color_role(turn@role)}{cost}"))
     cat(format(turns[[i]]))
   }
 
   invisible(x)
+}
+
+turn_cost <- function(tokens, cost, prefix, suffix = "") {
+  out <- paste0(prefix, "input=")
+
+  if (!is.na(tokens[[3]]) && tokens[[3]] > 0) {
+    out <- paste0(out, tokens[[1]], "+", tokens[[3]])
+  } else {
+    out <- paste0(out, tokens[[1]])
+  }
+  out <- paste0(out, " output=", tokens[[2]])
+
+  if (!is.na(cost)) {
+    out <- paste0(out, " cost=", format(dollars(cost)))
+  }
+  out <- paste0(out, suffix)
+  out
 }
 
 method(contents_markdown, new_S3_class("Chat")) <- function(

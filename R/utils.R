@@ -60,6 +60,23 @@ pretty_json <- function(x) {
   jsonlite::toJSON(x, pretty = TRUE, auto_unbox = TRUE)
 }
 
+parse_json <- function(x) {
+  tryCatch(
+    jsonlite::fromJSON(x, simplifyVector = FALSE),
+    error = function(cnd) NULL
+  )
+}
+
+read_ndjson <- function(path, fallback = \(line) NULL) {
+  lines <- readLines(path, warn = FALSE)
+  lapply(lines, function(line) {
+    tryCatch(
+      jsonlite::fromJSON(line, simplifyVector = FALSE),
+      error = function(cnd) fallback(line)
+    )
+  })
+}
+
 prettify <- function(x) {
   tryCatch(
     jsonlite::prettify(x),
@@ -119,7 +136,7 @@ dots_named <- function(...) {
 has_credentials <- function(provider) {
   switch(
     provider,
-    cortex = cortex_credentials_exist(),
+    snowflake = snowflake_credentials_exist(),
     openai = openai_key_exists(),
     claude = anthropic_key_exists(),
     cli::cli_abort("Unknown model {model}.")
@@ -168,16 +185,21 @@ cli_escape <- function(x) {
 
 api_key_param <- function(key) {
   paste_c(
-    "API key to use for authentication.\n",
-    "\n",
+    "Override the default credentials. ",
     c(
-      "You generally should not supply this directly, but instead set the ",
+      "You generally should not need this argument; instead set the ",
       c("`", key, "`"),
-      " environment variable.\n"
+      " environment variable. "
     ),
     c(
       "The best place to set this is in `.Renviron`,
       which you can easily edit by calling `usethis::edit_r_environ()`."
+    ),
+    "\n\n",
+    c(
+      "If you do need additional control, this argument takes a ",
+      "zero-argument function that returns either a string (the API key), ",
+      "or a named list (added as additional headers to every request)."
     )
   )
 }
@@ -262,13 +284,51 @@ eval_vignette <- function() {
 
 vcr_example_start <- function(name) {
   options(ellmer_echo = "none")
-  vcr::insert_example_cassette(
-    name,
-    package = "ellmer",
-    match_requests_on = c("uri", "body_json")
-  )
+  vcr::insert_example_cassette(name, package = "ellmer")
 }
 vcr_example_end <- function() {
   options(ellmer_echo = NULL)
   vcr::eject_cassette()
+}
+
+replay <- function(values) {
+  i <- 0
+  function() {
+    i <<- i + 1
+    values[[i]]
+  }
+}
+
+content_types <- function(turns) {
+  lapply(turns, function(turn) {
+    map_chr(turn@contents, function(x) S7_class(x)@name)
+  })
+}
+
+request_summary <- function(req) {
+  list(
+    url = req_get_url(req),
+    headers = req_get_headers(req, "reveal"),
+    body = req_get_body(req)
+  )
+}
+
+str_trunc <- function(x, n) {
+  ifelse(nchar(x) > n, paste0(substr(x, 1, n - 3), "..."), x)
+}
+
+extract_custom_id <- function(json_string) {
+  pattern <- '"custom_id"\\s*:\\s*"([^"]*)"'
+  match <- regexec(pattern, json_string)
+
+  result <- regmatches(json_string, match)[[1]]
+  if (length(result) < 2) {
+    return(NA_character_)
+  }
+
+  result[2] # Second element is the captured group
+}
+
+to_json <- function(x) {
+  jsonlite::toJSON(x, auto_unbox = TRUE)
 }

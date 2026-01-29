@@ -19,13 +19,13 @@
     Code
       chat
     Output
-      <Chat OpenAI/gpt-4.1-nano turns=3 tokens=15/5 $0.00>
-      -- system [0] ------------------------------------------------------------------
+      <Chat OpenAI/gpt-4.1-nano turns=3 input=10+5 output=5>
+      -- system ----------------------------------------------------------------------
       Be terse.
-      -- user [15] -------------------------------------------------------------------
+      -- user ------------------------------------------------------------------------
       What's 1 + 1?
       What's 1 + 2?
-      -- assistant [5] ---------------------------------------------------------------
+      -- assistant [input=10+5 output=5] ---------------------------------------------
       2
       
       3
@@ -35,124 +35,24 @@
     Code
       chat
     Output
-      <Chat OpenAI/gpt-4o turns=4 tokens=45000/1500 $0.13>
-      -- user [15000] ----------------------------------------------------------------
+      <Chat OpenAI/gpt-4o turns=4 input=45000 output=1500 cost=$0.30>
+      -- user ------------------------------------------------------------------------
       Input 1
-      -- assistant [500] -------------------------------------------------------------
+      -- assistant [input=15000 output=500 cost=$0.20] -------------------------------
       Output 1
-      -- user [14500] ----------------------------------------------------------------
+      -- user ------------------------------------------------------------------------
       Input 2
-      -- assistant [1000] ------------------------------------------------------------
+      -- assistant [input=30000 output=1000 cost=$0.10] ------------------------------
       Output 1
 
-# chat can get and register a list of tools
+# can compute costs
 
     Code
-      chat$set_tools(tools[[1]])
-    Condition
-      Error in `chat$set_tools()`:
-      ! `tools` must be a list of tools created with `ellmer::tool()`.
-      i Did you mean to call `$register_tool()`?
-
----
-
-    Code
-      chat$set_tools(c(tools, list("foo")))
-    Condition
-      Error in `chat$set_tools()`:
-      ! `tools` must be a list of tools created with `ellmer::tool()`.
-
-# can only register tools
-
-    Code
-      chat$register_tool(1)
-    Condition
-      Error in `chat$register_tool()`:
-      ! `tool` must be a <ToolDef>.
-    Code
-      chat$register_tools(1)
-    Condition
-      Error in `chat$register_tools()`:
-      ! `tools` must be a list, not the number 1.
-    Code
-      chat$register_tools(list(tool_def, 1))
-    Condition
-      Error in `chat$register_tools()`:
-      ! `tools[[2]]` must be a <ToolDef>, not the number 1.
-
-# chat warns on tool failures
-
-    Code
-      . <- chat$chat("What are Joe, Hadley, Simon, and Tom's favorite colors?")
-    Condition
-      Warning:
-      Failed to evaluate 4 tool calls.
-      x [user_favorite_color (ID)]: User denied tool request
-      x [user_favorite_color (ID)]: User denied tool request
-      x [user_favorite_color (ID)]: User denied tool request
-      i ... and 1 more.
-
-# chat callbacks for tool requests/results
-
-    Code
-      . <- chat$chat("What are Joe and Hadley's favorite colors?")
-    Message
-      [1] Tool request: Joe
-      [1] Tool result: blue
-      [2] Tool request: Hadley
-      [2] Tool result: red
-
----
-
-    Code
-      chat$on_tool_request(function(data) NULL)
-    Condition
-      Error:
-      ! `callback` must have the argument `request`; it currently has `data`.
-    Code
-      chat$on_tool_result(function(data) NULL)
-    Condition
-      Error:
-      ! `callback` must have the argument `result`; it currently has `data`.
-
-# tool calls can be rejected via `tool_request` callbacks
-
-    Code
-      . <- chat$chat("What are Joe and Hadley's favorite colors?",
-        "Write 'Joe ____ Hadley ____'. Use 'unknown' if you don't know.", echo = "output")
-    Message
-      ( ) [tool call] user_favorite_color(user = "Joe")
-      # #> Error: Tool call rejected. Joe denied the request.
-      ( ) [tool call] user_favorite_color(user = "Hadley")
-      o #> red
+      details
     Output
-      Joe unknown Hadley red
-
-# tool calls can be rejected via the tool function
-
-    Code
-      . <- chat$chat("What are Joe and Hadley's favorite colors?",
-        "Write 'Joe ____ Hadley ____'. Use 'unknown' if you don't know.", echo = "output")
-    Message
-      ( ) [tool call] user_favorite_color(user = "Joe")
-      # #> Error: Tool call rejected. The user has chosen to disallow the tool call.
-      ( ) [tool call] user_favorite_color(user = "Hadley")
-      o #> red
-    Output
-      Joe unknown Hadley red
-
-# old extract methods are deprecated
-
-    Code
-      chat_null$extract_data()
-    Condition
-      Warning:
-      `Chat$extract_data()` was deprecated in ellmer 0.2.0.
-      i Please use `Chat$chat_structured()` instead.
-    Code
-      chat_null$extract_data_async()
-    Condition
-      Warning:
-      `Chat$extract_data_async()` was deprecated in ellmer 0.2.0.
-      i Please use `Chat$chat_structured_async()` instead.
+      # A tibble: 2 x 5
+        input output cached_input cost       input_preview
+        <dbl>  <dbl>        <dbl> <ellmr_dl> <chr>        
+      1 15000    500            0 $0.20      Text[Input 1]
+      2 30000   1000            0 $0.10      Text[Input 2]
 

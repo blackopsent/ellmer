@@ -15,8 +15,17 @@ supports a wide variety of LLM providers and implements a rich set of
 features including streaming outputs, tool/function calling, structured
 data extraction, and more.
 
-(Looking for something similar to ellmer for python? Check out
-[chatlas](https://github.com/posit-dev/chatlas)!)
+ellmer is one of a number of LLM-related packages created by Posit:
+
+- Looking for something similar in python? Check out
+  [chatlas](https://github.com/posit-dev/chatlas)!
+- Want to evaluate your LLMs? Try
+  [vitals](https://vitals.tidyverse.org).
+- Need RAG? Take a look at [ragnar](https://ragnar.tidyverse.org).
+- Want to make a beautiful LLM powered chatbot? Consider
+  [shinychat](https://posit-dev.github.io/shinychat/).
+- Working with MCP? Check out
+  [mcptools](https://posit-dev.github.io/mcptools/).
 
 ## Installation
 
@@ -63,7 +72,7 @@ freedom, so we have a few recommendations to help you get started:
   `chat_openai()` defaults to **GPT-4.1**, but you can use
   `model = "gpt-4-1-nano"` for a cheaper, faster model, or
   `model = "o3"` for more complex reasoning. `chat_anthropic()` is also
-  good; it defaults to **Claude 3.7 Sonnet**, which we have found to be
+  good; it defaults to **Claude 4.0 Sonnet**, which we have found to be
   particularly good at writing R code.
 
 - `chat_google_gemini()` is a strong model with generous free tier (with
@@ -108,10 +117,7 @@ creating a new chat object:
 ``` r
 library(ellmer)
 
-chat <- chat_openai(
-  model = "gpt-4o-mini",
-  system_prompt = "You are a friendly but terse assistant.",
-)
+chat <- chat_openai("Be terse", model = "gpt-4o-mini")
 ```
 
 Chat objects are stateful [R6 objects](https://r6.r-lib.org): they
@@ -151,9 +157,16 @@ The second most interactive way to chat is to call the `chat()` method:
 
 ``` r
 chat$chat("What preceding languages most influenced R?")
-#> R was primarily influenced by the S programming language, particularly S-PLUS.
-#> Other languages that had an impact include Scheme and various data analysis
-#> languages.
+#> R was primarily influenced by S, a language developed at Bell Laboratories. 
+#> Other notable influences include:
+#> 
+#> 1. **Scheme** - For functional programming concepts.
+#> 2. **LISP** - For its powerful data manipulation features.
+#> 3. **C** - For performance and system-level access.
+#> 4. **Fortran** - For numerical and statistical computations.
+#> 
+#> These languages contributed to R's syntax, data structures, and functional 
+#> programming capabilities.
 ```
 
 If you initialize the chat object in the global environment, the `chat`
@@ -171,32 +184,28 @@ chat$chat(
   content_image_url("https://www.r-project.org/Rlogo.png"),
   "Can you explain this logo?"
 )
-#> The logo of R features a stylized letter "R" in blue, enclosed in an oval
-#> shape that resembles the letter "O," signifying the programming language's
-#> name. The design conveys a modern and professional look, reflecting its use
-#> in statistical computing and data analysis. The blue color often represents
-#> trust and reliability, which aligns with R's role in data science.
+#> The logo consists of a stylized letter "R" in blue, surrounded by a gray oval 
+#> shape. The design reflects the programming language R, which is widely used for
+#> statistical computing and graphics. The color choice often symbolizes clarity 
+#> and professionalism, aligning with R's use in data analysis and research. The 
+#> logo encapsulates the language's focus on data visualization and statistical 
+#> methods.
 ```
 
-### Programmatic chat
+### Streaming vs capturing
 
-The most programmatic way to chat is to create the chat object inside a
-function. By doing so, live streaming is automatically suppressed and
-`$chat()` returns the result as a string:
+In most circumstances, ellmer will stream the output to the console. You
+can take control of this by setting the `echo` argument either when
+creating the chat object or when calling `$chat()`. Set `echo = "none"`
+to return a string instead:
 
 ``` r
 my_function <- function() {
-  chat <- chat_openai(
-    model = "gpt-4o-mini",
-    system_prompt = "You are a friendly but terse assistant.",
-  )
-  chat$chat("Is R a functional programming language?")
+  chat <- chat_openai("Be terse", model = "gpt-4o-mini", echo = "none")
+  chat$chat("What is 6 times 7?")
 }
-my_function()
-#> [1] "Yes, R supports functional programming concepts. It allows functions to
-#> be first-class objects, supports higher-order functions, and encourages the
-#> use of functions as core components of code. However, it also supports
-#> procedural and object-oriented programming styles."
+str(my_function())
+#>  'ellmer_output' chr "6 times 7 is 42."
 ```
 
 If needed, you can manually control this behaviour with the `echo`

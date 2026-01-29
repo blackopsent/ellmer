@@ -17,16 +17,6 @@
       cat(contents_text(turn))
     Output
       User input.
-      
-      ```sql
-      SELECT * FROM mtcars
-      ```
-      
-      #### Suggestions
-      
-      - What is the total quantity sold for each product last quarter?
-      - What is the average discount percentage for orders from the United States?
-      - What is the average price of products in the 'electronics' category?
 
 ---
 
@@ -45,21 +35,6 @@
         "b": "apple"
       }
       ```
-      
-      
-      
-      
-      ```sql
-      SELECT * FROM mtcars
-      ```
-      
-      
-      
-      #### Suggestions
-      
-      - What is the total quantity sold for each product last quarter?
-      - What is the average discount percentage for orders from the United States?
-      - What is the average price of products in the 'electronics' category?
 
 ---
 
@@ -82,20 +57,6 @@
       ```
       
       
-      
-      
-      ```sql
-      SELECT * FROM mtcars
-      ```
-      
-      
-      
-      #### Suggestions
-      
-      - What is the total quantity sold for each product last quarter?
-      - What is the average discount percentage for orders from the United States?
-      - What is the average price of products in the 'electronics' category?
-      
       ## Assistant
       
       Here's your answer.
@@ -113,8 +74,6 @@
         "a": [1, 2],
         "b": "apple"
       }</code></pre>
-      
-      <pre><code>SELECT * FROM mtcars</code></pre>
 
 # thinking has useful representations
 
@@ -124,6 +83,20 @@
       <details><summary>Thinking</summary>
       <p>A <strong>thought</strong>.</p>
       </details>
+
+# ContentToolRequest shows converted arguments
+
+    Code
+      cat(format(content))
+    Output
+      [tool request (id)]: my_tool(x = c(1, 2), y = c("a", "b"), z = "a")
+
+---
+
+    Code
+      cat(format(content))
+    Output
+      [tool request (id)]: my_tool(x = c(123, 123, 123, 123, 123, 123, 123, 123, 123, 123, ...)
 
 # ContentToolResult@error requires a string or an error condition
 

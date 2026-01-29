@@ -17,7 +17,11 @@ NULL
 #' @param model Name of the model.
 #' @param base_url The base URL for the API.
 #' @param params A list of standard parameters created by [params()].
+#' @param credentials A zero-argument function that returns the credentials to use
+#'   for authentication. Can either return a string, representing an API key,
+#'   or a named list of headers.
 #' @param extra_args Arbitrary extra arguments to be included in the request body.
+#' @param extra_headers Arbitrary extra headers to be added to the request.
 #' @return An S7 Provider object.
 #' @examples
 #' Provider(
@@ -32,7 +36,9 @@ Provider <- new_class(
     model = prop_string(),
     base_url = prop_string(),
     params = class_list,
-    extra_args = class_list
+    extra_args = class_list,
+    extra_headers = class_character,
+    credentials = class_function | NULL
   )
 )
 
@@ -87,6 +93,7 @@ method(chat_request, Provider) <- function(
   )
   body <- modify_list(body, provider@extra_args)
   req <- req_body_json(req, body)
+  req <- req_headers(req, !!!provider@extra_headers)
 
   req
 }
@@ -137,13 +144,30 @@ stream_parse <- new_generic(
     S7_dispatch()
   }
 )
-stream_text <- new_generic(
-  "stream_text",
+stream_content <- new_generic(
+  "stream_content",
   "provider",
   function(provider, event) {
     S7_dispatch()
   }
 )
+
+stream_text <- function(provider, event) {
+  content <- stream_content(provider, event)
+  if (is.null(content)) {
+    return(NULL)
+  }
+  content_text(content)
+}
+
+content_text <- function(content) {
+  switch(
+    class(content)[1],
+    "ellmer::ContentThinking" = content@thinking,
+    "ellmer::ContentText" = content@text,
+    format(content)
+  )
+}
 stream_merge_chunks <- new_generic(
   "stream_merge_chunks",
   "provider",
@@ -156,15 +180,39 @@ stream_merge_chunks <- new_generic(
 
 value_turn <- new_generic("value_turn", "provider")
 
-# Convert to JSON
-as_json <- new_generic("as_json", c("provider", "x"))
-
-method(as_json, list(Provider, class_list)) <- function(provider, x) {
-  compact(lapply(x, as_json, provider = provider))
+# Extract token counts from API response
+# Returns a named list produced by token_usage()
+value_tokens <- new_generic(
+  "value_tokens",
+  "provider",
+  function(provider, json) {
+    S7_dispatch()
+  }
+)
+method(value_tokens, Provider) <- function(provider, json) {
+  tokens()
 }
 
-method(as_json, list(Provider, ContentJson)) <- function(provider, x) {
-  as_json(provider, ContentText("<structured data/>"))
+# Convert to JSON
+as_json <- new_generic(
+  "as_json",
+  c("provider", "x"),
+  function(provider, x, ...) {
+    S7_dispatch()
+  }
+)
+
+method(as_json, list(Provider, class_list)) <- function(provider, x, ...) {
+  compact(lapply(x, as_json, provider = provider, ...))
+}
+
+method(as_json, list(Provider, ContentJson)) <- function(provider, x, ...) {
+  if (!is.null(x@string)) {
+    string <- x@string
+  } else {
+    string <- unclass(jsonlite::toJSON(x@data, auto_unbox = TRUE))
+  }
+  as_json(provider, ContentText(string), ...)
 }
 
 # Batch AI ---------------------------------------------------------------
@@ -231,17 +279,3 @@ batch_result_turn <- new_generic(
     S7_dispatch()
   }
 )
-
-# Pricing ---------------------------------------------------------------------
-
-standardise_model <- new_generic(
-  "standardise_model",
-  "provider",
-  function(provider, model) {
-    S7_dispatch()
-  }
-)
-
-method(standardise_model, Provider) <- function(provider, model) {
-  model
-}

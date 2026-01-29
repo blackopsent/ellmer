@@ -1,0 +1,482 @@
+http_interactions:
+- request:
+    method: POST
+    uri: https://api.openai.com/v1/responses
+    body:
+      string: '{"input":[{"role":"system","content":[{"type":"input_text","text":"Be
+        terse."}]},{"role":"user","content":[{"type":"input_text","text":"Roll the
+        dice, please! Reply with ''You rolled ____''"}]}],"model":"gpt-4.1-nano","temperature":0,"stream":false,"tools":[{"type":"function","name":"roll","description":"Rolls
+        a six-sided die.","strict":true,"parameters":{"type":"object","description":"","properties":{},"required":[],"additionalProperties":false}}],"store":false,"service_tier":"auto"}'
+  response:
+    status: 200
+    headers:
+      alt-svc: h3=":443"; ma=86400
+      cf-cache-status: DYNAMIC
+      cf-ray: 999df956788b6d84-DFW
+      content-encoding: gzip
+      content-type: application/json
+      date: Wed, 05 Nov 2025 17:12:05 GMT
+      openai-organization: posit-esfrkf
+      openai-processing-ms: '761'
+      openai-project: proj_IeWhBnzvOO8wbVR5MdxnGXFq
+      openai-version: '2020-10-01'
+      server: cloudflare
+      set-cookie:
+      - __cf_bm=ZhkMUFxpWXJz4X151P4w2Ywxszx5gV2p4ppvs742Svs-1762362725-1.0.1.1-B1IFSWqLRj5iD.vD7822hzadPjltZMM.pxbbEmE2BI64GUstTsNE9GGbO1blQkC73KanjwXvQa7iNZRZHPHQjYOBiZNvYEtRmMBDiQ5Ym2w;
+        path=/; expires=Wed, 05-Nov-25 17:42:05 GMT; domain=.api.openai.com; HttpOnly;
+        Secure; SameSite=None
+      - _cfuvid=wq6nLjl7fkIDGC9l7Ub6GmNurK4os3bBd2K5mTUzLE8-1762362725698-0.0.1.1-604800000;
+        path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '770'
+      x-ratelimit-limit-requests: '30000'
+      x-ratelimit-limit-tokens: '150000000'
+      x-ratelimit-remaining-requests: '29999'
+      x-ratelimit-remaining-tokens: '149999732'
+      x-ratelimit-reset-requests: 2ms
+      x-ratelimit-reset-tokens: 0s
+      x-request-id: req_6016636c239e476a9314ff3d09e81e81
+    body:
+      string: |-
+        {
+          "id": "resp_0071d12fe6dd247701690b8564f48c819697782a7f4393b414",
+          "object": "response",
+          "created_at": 1762362724,
+          "status": "completed",
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "error": null,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-4.1-nano-2025-04-14",
+          "output": [
+            {
+              "id": "fc_0071d12fe6dd247701690b8565986881968cad62bdc1dceb3e",
+              "type": "function_call",
+              "status": "completed",
+              "arguments": "{}",
+              "call_id": "call_Z71zWjLzmUDcB9TUPG62jW0N",
+              "name": "roll"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": null,
+          "reasoning": {
+            "effort": null,
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 0.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "type": "function",
+              "description": "Rolls a six-sided die.",
+              "name": "roll",
+              "parameters": {
+                "type": "object",
+                "description": "",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              },
+              "strict": true
+            }
+          ],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 50,
+            "input_tokens_details": {
+              "cached_tokens": 0
+            },
+            "output_tokens": 10,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 60
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: 2025-11-05 17:12:05
+- request:
+    method: POST
+    uri: https://api.openai.com/v1/responses
+    body:
+      string: '{"input":[{"role":"system","content":[{"type":"input_text","text":"Be
+        terse."}]},{"role":"user","content":[{"type":"input_text","text":"Roll the
+        dice, please! Reply with ''You rolled ____''"}]}],"model":"gpt-4.1-nano","temperature":0,"stream":false,"tools":[{"type":"function","name":"roll","description":"Rolls
+        a six-sided die.","strict":true,"parameters":{"type":"object","description":"","properties":{},"required":[],"additionalProperties":false}}],"store":false,"service_tier":"auto"}'
+  response:
+    status: 200
+    headers:
+      alt-svc: h3=":443"; ma=86400
+      cf-cache-status: DYNAMIC
+      cf-ray: 999df95c9f706d84-DFW
+      content-encoding: gzip
+      content-type: application/json
+      date: Wed, 05 Nov 2025 17:12:06 GMT
+      openai-organization: posit-esfrkf
+      openai-processing-ms: '726'
+      openai-project: proj_IeWhBnzvOO8wbVR5MdxnGXFq
+      openai-version: '2020-10-01'
+      server: cloudflare
+      set-cookie:
+      - __cf_bm=k47KZQ6kjX8gpTr7Wc65oMw.xDpACWpjOHsuQfI.5AE-1762362726-1.0.1.1-TpGWR249r9dfrBuQl.VT89QMnWey.yfSpriCVfUxLhlPj_mrYsg7Ssh76O3Pi6wXP89BJEzWNJaIetelf0RWgpe6JVz0cmCtq2SmkxJ55pY;
+        path=/; expires=Wed, 05-Nov-25 17:42:06 GMT; domain=.api.openai.com; HttpOnly;
+        Secure; SameSite=None
+      - _cfuvid=6__2utK7DzYBxGwPg8N.g7jW4nVeAYvtls15kS.rY3U-1762362726625-0.0.1.1-604800000;
+        path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '732'
+      x-ratelimit-limit-requests: '30000'
+      x-ratelimit-limit-tokens: '150000000'
+      x-ratelimit-remaining-requests: '29999'
+      x-ratelimit-remaining-tokens: '149999732'
+      x-ratelimit-reset-requests: 2ms
+      x-ratelimit-reset-tokens: 0s
+      x-request-id: req_b6c2e3bcf75148108b0a8999c04e9fa9
+    body:
+      string: |-
+        {
+          "id": "resp_0f768505cf1fd3b901690b8565edd0819698186acab6efcaee",
+          "object": "response",
+          "created_at": 1762362725,
+          "status": "completed",
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "error": null,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-4.1-nano-2025-04-14",
+          "output": [
+            {
+              "id": "fc_0f768505cf1fd3b901690b85668c388196a2d4efac2dffd861",
+              "type": "function_call",
+              "status": "completed",
+              "arguments": "{}",
+              "call_id": "call_aUOPFX874I043e3d0LWrbcVD",
+              "name": "roll"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": null,
+          "reasoning": {
+            "effort": null,
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 0.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "type": "function",
+              "description": "Rolls a six-sided die.",
+              "name": "roll",
+              "parameters": {
+                "type": "object",
+                "description": "",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              },
+              "strict": true
+            }
+          ],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 50,
+            "input_tokens_details": {
+              "cached_tokens": 0
+            },
+            "output_tokens": 10,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 60
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: 2025-11-05 17:12:06
+- request:
+    method: POST
+    uri: https://api.openai.com/v1/responses
+    body:
+      string: '{"input":[{"role":"system","content":[{"type":"input_text","text":"Be
+        terse."}]},{"role":"user","content":[{"type":"input_text","text":"Roll the
+        dice, please! Reply with ''You rolled ____''"}]},{"type":"function_call","call_id":"fc_0071d12fe6dd247701690b8565986881968cad62bdc1dceb3e","name":"roll","arguments":"{}"},{"type":"function_call_output","call_id":"fc_0071d12fe6dd247701690b8565986881968cad62bdc1dceb3e","output":"1"}],"model":"gpt-4.1-nano","temperature":0,"stream":false,"tools":[{"type":"function","name":"roll","description":"Rolls
+        a six-sided die.","strict":true,"parameters":{"type":"object","description":"","properties":{},"required":[],"additionalProperties":false}}],"store":false,"service_tier":"auto"}'
+  response:
+    status: 200
+    headers:
+      alt-svc: h3=":443"; ma=86400
+      cf-cache-status: DYNAMIC
+      cf-ray: 999df961ec456d84-DFW
+      content-encoding: gzip
+      content-type: application/json
+      date: Wed, 05 Nov 2025 17:12:07 GMT
+      openai-organization: posit-esfrkf
+      openai-processing-ms: '531'
+      openai-project: proj_IeWhBnzvOO8wbVR5MdxnGXFq
+      openai-version: '2020-10-01'
+      server: cloudflare
+      set-cookie:
+      - __cf_bm=yN6xBS94_sPOFVCj0tB5VP4T.07MZtyr50aIML41lDQ-1762362727-1.0.1.1-MVPSBGwE54_nM1wMKDaY5gBbURKFP8xzY_IPhMhs3sBaG3Tn0qsqM3VnNeP3Uba6hv1Gf0rKkoFkcmz4pcIVbjsUT9GRpvq5XM2ytNuEkuo;
+        path=/; expires=Wed, 05-Nov-25 17:42:07 GMT; domain=.api.openai.com; HttpOnly;
+        Secure; SameSite=None
+      - _cfuvid=KJG0_YwvSdLQYYywXYTXPQLRe6Y9LjtGOMoM2sCm204-1762362727291-0.0.1.1-604800000;
+        path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '538'
+      x-ratelimit-limit-requests: '30000'
+      x-ratelimit-limit-tokens: '150000000'
+      x-ratelimit-remaining-requests: '29999'
+      x-ratelimit-remaining-tokens: '149999717'
+      x-ratelimit-reset-requests: 2ms
+      x-ratelimit-reset-tokens: 0s
+      x-request-id: req_a18ef8b195c243f6a2dd503278d49ddc
+    body:
+      string: |-
+        {
+          "id": "resp_0f613ba39f599f5801690b8566c36481948277dbc89e788203",
+          "object": "response",
+          "created_at": 1762362726,
+          "status": "completed",
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "error": null,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-4.1-nano-2025-04-14",
+          "output": [
+            {
+              "id": "msg_0f613ba39f599f5801690b85672f888194ad3f4c26108d90c3",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "You rolled 1"
+                }
+              ],
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": null,
+          "reasoning": {
+            "effort": null,
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 0.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "type": "function",
+              "description": "Rolls a six-sided die.",
+              "name": "roll",
+              "parameters": {
+                "type": "object",
+                "description": "",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              },
+              "strict": true
+            }
+          ],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 65,
+            "input_tokens_details": {
+              "cached_tokens": 0
+            },
+            "output_tokens": 6,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 71
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: 2025-11-05 17:12:07
+- request:
+    method: POST
+    uri: https://api.openai.com/v1/responses
+    body:
+      string: '{"input":[{"role":"system","content":[{"type":"input_text","text":"Be
+        terse."}]},{"role":"user","content":[{"type":"input_text","text":"Roll the
+        dice, please! Reply with ''You rolled ____''"}]},{"type":"function_call","call_id":"fc_0f768505cf1fd3b901690b85668c388196a2d4efac2dffd861","name":"roll","arguments":"{}"},{"type":"function_call_output","call_id":"fc_0f768505cf1fd3b901690b85668c388196a2d4efac2dffd861","output":"2"}],"model":"gpt-4.1-nano","temperature":0,"stream":false,"tools":[{"type":"function","name":"roll","description":"Rolls
+        a six-sided die.","strict":true,"parameters":{"type":"object","description":"","properties":{},"required":[],"additionalProperties":false}}],"store":false,"service_tier":"auto"}'
+  response:
+    status: 200
+    headers:
+      alt-svc: h3=":443"; ma=86400
+      cf-cache-status: DYNAMIC
+      cf-ray: 999df9660bf86d84-DFW
+      content-encoding: gzip
+      content-type: application/json
+      date: Wed, 05 Nov 2025 17:12:08 GMT
+      openai-organization: posit-esfrkf
+      openai-processing-ms: '582'
+      openai-project: proj_IeWhBnzvOO8wbVR5MdxnGXFq
+      openai-version: '2020-10-01'
+      server: cloudflare
+      set-cookie:
+      - __cf_bm=WH9ZPzrBAhpHiSbtGnEIoo6gyhgcs2GG7mlVfdgDhmA-1762362728-1.0.1.1-LZQeo3Zcznkl7bDisNJI6AxKF9dm4HZYH3VZ.AGlhAv_P_A5ZmI9xbTrgEPb1.ElXAMfkMzr33M1vPbglBHcjuE8s5c11T7.pv48pZCAuSQ;
+        path=/; expires=Wed, 05-Nov-25 17:42:08 GMT; domain=.api.openai.com; HttpOnly;
+        Secure; SameSite=None
+      - _cfuvid=eosUVodC_tQ6XsdNL7R0P1R.mdtxOvDg6itzP47IKP8-1762362728001-0.0.1.1-604800000;
+        path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '587'
+      x-ratelimit-limit-requests: '30000'
+      x-ratelimit-limit-tokens: '150000000'
+      x-ratelimit-remaining-requests: '29999'
+      x-ratelimit-remaining-tokens: '149999717'
+      x-ratelimit-reset-requests: 2ms
+      x-ratelimit-reset-tokens: 0s
+      x-request-id: req_b9689b87274447e4bf32e6f134f9d7d0
+    body:
+      string: |-
+        {
+          "id": "resp_0cba073562edffa201690b856769988190804b11c28714be0f",
+          "object": "response",
+          "created_at": 1762362727,
+          "status": "completed",
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "error": null,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-4.1-nano-2025-04-14",
+          "output": [
+            {
+              "id": "msg_0cba073562edffa201690b8567e16c8190b1f5a19c5af1a7d6",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "You rolled 2"
+                }
+              ],
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": null,
+          "reasoning": {
+            "effort": null,
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 0.0,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "type": "function",
+              "description": "Rolls a six-sided die.",
+              "name": "roll",
+              "parameters": {
+                "type": "object",
+                "description": "",
+                "properties": {},
+                "required": [],
+                "additionalProperties": false
+              },
+              "strict": true
+            }
+          ],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 65,
+            "input_tokens_details": {
+              "cached_tokens": 0
+            },
+            "output_tokens": 6,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 71
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: 2025-11-05 17:12:07
+recorded_with: VCR-vcr/2.0.0

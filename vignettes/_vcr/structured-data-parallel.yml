@@ -1,0 +1,776 @@
+http_interactions:
+- request:
+    method: POST
+    uri: https://api.openai.com/v1/responses
+    body:
+      string: '{"input":[{"role":"user","content":[{"type":"input_text","text":"I
+        go by Alex. 42 years on this planet and counting."}]}],"model":"gpt-4.1","stream":false,"text":{"format":{"type":"json_schema","name":"structured_data","schema":{"type":"object","description":"","properties":{"name":{"type":"string","description":""},"age":{"type":"number","description":""}},"required":["name","age"],"additionalProperties":false},"strict":true}},"store":false,"service_tier":"auto"}'
+  response:
+    status: 200
+    headers:
+      alt-svc: h3=":443"; ma=86400
+      cf-cache-status: DYNAMIC
+      cf-ray: 999eed143e793458-DFW
+      content-encoding: gzip
+      content-type: application/json
+      date: Wed, 05 Nov 2025 19:58:29 GMT
+      openai-organization: posit-esfrkf
+      openai-processing-ms: '1367'
+      openai-project: proj_IeWhBnzvOO8wbVR5MdxnGXFq
+      openai-version: '2020-10-01'
+      server: cloudflare
+      set-cookie:
+      - __cf_bm=1DDKDWM1USGglaLooIuEYM9iesPnXEzcEOnD07wREjA-1762372709-1.0.1.1-tVJzRqgvO5vgOOdQ944krcaiEXs_vaqS8TRY9uwT9wdIEO0iCCnvjkVme7KxghTVN7z16D35HgZ1v2N.XcY7AWXxgoiOidJ5i2sQsa4B2Jw;
+        path=/; expires=Wed, 05-Nov-25 20:28:29 GMT; domain=.api.openai.com; HttpOnly;
+        Secure; SameSite=None
+      - _cfuvid=8qyOv2gNAjAW5iYA3GyOTBkivNfBS4vWAyIfLUs5lZg-1762372709950-0.0.1.1-604800000;
+        path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '1373'
+      x-ratelimit-limit-requests: '10000'
+      x-ratelimit-limit-tokens: '30000000'
+      x-ratelimit-remaining-requests: '9999'
+      x-ratelimit-remaining-tokens: '29999921'
+      x-ratelimit-reset-requests: 6ms
+      x-ratelimit-reset-tokens: 0s
+      x-request-id: req_898bee4ffc3244a695e966f08b46fb64
+    body:
+      string: |-
+        {
+          "id": "resp_08bd00d1fde18a1101690bac6494c88193b675c97dfe7392cf",
+          "object": "response",
+          "created_at": 1762372708,
+          "status": "completed",
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "error": null,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-4.1-2025-04-14",
+          "output": [
+            {
+              "id": "msg_08bd00d1fde18a1101690bac65b9c481938e7877757ba084e2",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\"name\":\"Alex\",\"age\":42}"
+                }
+              ],
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": null,
+          "reasoning": {
+            "effort": null,
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "json_schema",
+              "description": null,
+              "name": "structured_data",
+              "schema": {
+                "type": "object",
+                "description": "",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": ""
+                  },
+                  "age": {
+                    "type": "number",
+                    "description": ""
+                  }
+                },
+                "required": [
+                  "name",
+                  "age"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 60,
+            "input_tokens_details": {
+              "cached_tokens": 0
+            },
+            "output_tokens": 10,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 70
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: 2025-11-05 19:58:29
+- request:
+    method: POST
+    uri: https://api.openai.com/v1/responses
+    body:
+      string: '{"input":[{"role":"user","content":[{"type":"input_text","text":"Pleased
+        to meet you! I''m Jamal, age 27."}]}],"model":"gpt-4.1","stream":false,"text":{"format":{"type":"json_schema","name":"structured_data","schema":{"type":"object","description":"","properties":{"name":{"type":"string","description":""},"age":{"type":"number","description":""}},"required":["name","age"],"additionalProperties":false},"strict":true}},"store":false,"service_tier":"auto"}'
+  response:
+    status: 200
+    headers:
+      alt-svc: h3=":443"; ma=86400
+      cf-cache-status: DYNAMIC
+      cf-ray: 999eed1d69ab3458-DFW
+      content-encoding: gzip
+      content-type: application/json
+      date: Wed, 05 Nov 2025 19:58:32 GMT
+      openai-organization: posit-esfrkf
+      openai-processing-ms: '2611'
+      openai-project: proj_IeWhBnzvOO8wbVR5MdxnGXFq
+      openai-version: '2020-10-01'
+      server: cloudflare
+      set-cookie:
+      - __cf_bm=WYfLKbAGMM9VHhdyHUsUIvPILLwMYir_2.jnn4NLZPM-1762372712-1.0.1.1-FT8ojrmMG_BYHnzGhFRu6UgDXGgp.4c2z5SCDOYFEntIRIE2rmOFdDPRRb6vTnYGdJsZkExa0Dpr5H6GEvI6ckFUCfFA8ubq9xtlIFJRdJk;
+        path=/; expires=Wed, 05-Nov-25 20:28:32 GMT; domain=.api.openai.com; HttpOnly;
+        Secure; SameSite=None
+      - _cfuvid=zPpSM1QiuY3vv4MC3nsQ7t4c9XD7VioGMB2_fz7CQBw-1762372712694-0.0.1.1-604800000;
+        path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '2616'
+      x-ratelimit-limit-requests: '10000'
+      x-ratelimit-limit-tokens: '30000000'
+      x-ratelimit-remaining-requests: '9999'
+      x-ratelimit-remaining-tokens: '29999921'
+      x-ratelimit-reset-requests: 6ms
+      x-ratelimit-reset-tokens: 0s
+      x-request-id: req_b65068cd7ccf4c33ad7a0652d2239268
+    body:
+      string: |-
+        {
+          "id": "resp_035b294d5fa3b2ed01690bac67ef9481978b32629d40f6b146",
+          "object": "response",
+          "created_at": 1762372712,
+          "status": "completed",
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "error": null,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-4.1-2025-04-14",
+          "output": [
+            {
+              "id": "msg_035b294d5fa3b2ed01690bac6885008197a7c2ec3773597c5c",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\"name\":\"Jamal\",\"age\":27}"
+                }
+              ],
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": null,
+          "reasoning": {
+            "effort": null,
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "json_schema",
+              "description": null,
+              "name": "structured_data",
+              "schema": {
+                "type": "object",
+                "description": "",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": ""
+                  },
+                  "age": {
+                    "type": "number",
+                    "description": ""
+                  }
+                },
+                "required": [
+                  "name",
+                  "age"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 60,
+            "input_tokens_details": {
+              "cached_tokens": 0
+            },
+            "output_tokens": 11,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 71
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: 2025-11-05 19:58:32
+- request:
+    method: POST
+    uri: https://api.openai.com/v1/responses
+    body:
+      string: '{"input":[{"role":"user","content":[{"type":"input_text","text":"They
+        call me Li Wei. Nineteen years young."}]}],"model":"gpt-4.1","stream":false,"text":{"format":{"type":"json_schema","name":"structured_data","schema":{"type":"object","description":"","properties":{"name":{"type":"string","description":""},"age":{"type":"number","description":""}},"required":["name","age"],"additionalProperties":false},"strict":true}},"store":false,"service_tier":"auto"}'
+  response:
+    status: 200
+    headers:
+      alt-svc: h3=":443"; ma=86400
+      cf-cache-status: DYNAMIC
+      cf-ray: 999eed2e9ddc3458-DFW
+      content-encoding: gzip
+      content-type: application/json
+      date: Wed, 05 Nov 2025 19:58:34 GMT
+      openai-organization: posit-esfrkf
+      openai-processing-ms: '1298'
+      openai-project: proj_IeWhBnzvOO8wbVR5MdxnGXFq
+      openai-version: '2020-10-01'
+      server: cloudflare
+      set-cookie:
+      - __cf_bm=EtKGkg4luLdpUYkwPhwCp4K72Uo1BlzDXEknqlnfhVo-1762372714-1.0.1.1-ij4BYsfwFUd8P4BwfCgplmSa3vdbzMOTM1DCyIN63c6dMLO2CMgGl06i2ZtSuJsOJGBmc4S7W2SmOGKSFhcu9ZJFa.HydqRQc09T.jqFx6A;
+        path=/; expires=Wed, 05-Nov-25 20:28:34 GMT; domain=.api.openai.com; HttpOnly;
+        Secure; SameSite=None
+      - _cfuvid=RIKNMWqVsEXdvp3Upw49QtWhQ9bxnWgcgMABVSh1QZw-1762372714113-0.0.1.1-604800000;
+        path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '1304'
+      x-ratelimit-limit-requests: '10000'
+      x-ratelimit-limit-tokens: '30000000'
+      x-ratelimit-remaining-requests: '9999'
+      x-ratelimit-remaining-tokens: '29999923'
+      x-ratelimit-reset-requests: 6ms
+      x-ratelimit-reset-tokens: 0s
+      x-request-id: req_ca6a02bb3bec48fc9f5b4e91caf3f3e4
+    body:
+      string: |-
+        {
+          "id": "resp_0b3e5ca4dd4edf3501690bac68cfd08195b1e7c23a07b1cdd7",
+          "object": "response",
+          "created_at": 1762372712,
+          "status": "completed",
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "error": null,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-4.1-2025-04-14",
+          "output": [
+            {
+              "id": "msg_0b3e5ca4dd4edf3501690bac69c0748195af2c3cf679a02b72",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\"name\":\"Li Wei\",\"age\":19}"
+                }
+              ],
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": null,
+          "reasoning": {
+            "effort": null,
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "json_schema",
+              "description": null,
+              "name": "structured_data",
+              "schema": {
+                "type": "object",
+                "description": "",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": ""
+                  },
+                  "age": {
+                    "type": "number",
+                    "description": ""
+                  }
+                },
+                "required": [
+                  "name",
+                  "age"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 58,
+            "input_tokens_details": {
+              "cached_tokens": 0
+            },
+            "output_tokens": 11,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 69
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: 2025-11-05 19:58:34
+- request:
+    method: POST
+    uri: https://api.openai.com/v1/responses
+    body:
+      string: '{"input":[{"role":"user","content":[{"type":"input_text","text":"Fatima
+        here. Just celebrated my 35th birthday last week."}]}],"model":"gpt-4.1","stream":false,"text":{"format":{"type":"json_schema","name":"structured_data","schema":{"type":"object","description":"","properties":{"name":{"type":"string","description":""},"age":{"type":"number","description":""}},"required":["name","age"],"additionalProperties":false},"strict":true}},"store":false,"service_tier":"auto"}'
+  response:
+    status: 200
+    headers:
+      alt-svc: h3=":443"; ma=86400
+      cf-cache-status: DYNAMIC
+      cf-ray: 999eed37789b3458-DFW
+      content-encoding: gzip
+      content-type: application/json
+      date: Wed, 05 Nov 2025 19:58:35 GMT
+      openai-organization: posit-esfrkf
+      openai-processing-ms: '874'
+      openai-project: proj_IeWhBnzvOO8wbVR5MdxnGXFq
+      openai-version: '2020-10-01'
+      server: cloudflare
+      set-cookie:
+      - __cf_bm=IgqqyYEAkqZ6qsG8kRHZ_Pbgl7NGl421iGoAzRj4fk8-1762372715-1.0.1.1-y7b9SQ0dEAksNJSXv8f2quPAZ5POScAiXOQhrqoI8rYk092_7MbCW6jO_cYIiShBUWDdtJVgnE7OQOEnVUvfO0lDcHBhEtOPJweSrQUnVJ8;
+        path=/; expires=Wed, 05-Nov-25 20:28:35 GMT; domain=.api.openai.com; HttpOnly;
+        Secure; SameSite=None
+      - _cfuvid=YN5N48BVGGxVL9v_ZoDhJjqy0Cw9ZsRQhRSG0rAkYeQ-1762372715082-0.0.1.1-604800000;
+        path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '881'
+      x-ratelimit-limit-requests: '10000'
+      x-ratelimit-limit-tokens: '30000000'
+      x-ratelimit-remaining-requests: '9999'
+      x-ratelimit-remaining-tokens: '29999921'
+      x-ratelimit-reset-requests: 1m0s
+      x-ratelimit-reset-tokens: 1m0s
+      x-request-id: req_4f4d9047c4b940ccb1cc46f41a21a994
+    body:
+      string: |-
+        {
+          "id": "resp_04f9ec5f6a28be8701690bac6a35648195826f4926c4815b05",
+          "object": "response",
+          "created_at": 1762372714,
+          "status": "completed",
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "error": null,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-4.1-2025-04-14",
+          "output": [
+            {
+              "id": "msg_04f9ec5f6a28be8701690bac6ac5bc8195a47ec492ac11a488",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\"name\":\"Fatima\",\"age\":35}"
+                }
+              ],
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": null,
+          "reasoning": {
+            "effort": null,
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "json_schema",
+              "description": null,
+              "name": "structured_data",
+              "schema": {
+                "type": "object",
+                "description": "",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": ""
+                  },
+                  "age": {
+                    "type": "number",
+                    "description": ""
+                  }
+                },
+                "required": [
+                  "name",
+                  "age"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 60,
+            "input_tokens_details": {
+              "cached_tokens": 0
+            },
+            "output_tokens": 11,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 71
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: 2025-11-05 19:58:35
+- request:
+    method: POST
+    uri: https://api.openai.com/v1/responses
+    body:
+      string: '{"input":[{"role":"user","content":[{"type":"input_text","text":"The
+        name''s Robert - 51 years old and proud of it."}]}],"model":"gpt-4.1","stream":false,"text":{"format":{"type":"json_schema","name":"structured_data","schema":{"type":"object","description":"","properties":{"name":{"type":"string","description":""},"age":{"type":"number","description":""}},"required":["name","age"],"additionalProperties":false},"strict":true}},"store":false,"service_tier":"auto"}'
+  response:
+    status: 200
+    headers:
+      alt-svc: h3=":443"; ma=86400
+      cf-cache-status: DYNAMIC
+      cf-ray: 999eed3d7f223458-DFW
+      content-encoding: gzip
+      content-type: application/json
+      date: Wed, 05 Nov 2025 19:58:36 GMT
+      openai-organization: posit-esfrkf
+      openai-processing-ms: '1446'
+      openai-project: proj_IeWhBnzvOO8wbVR5MdxnGXFq
+      openai-version: '2020-10-01'
+      server: cloudflare
+      set-cookie:
+      - __cf_bm=wposLT_8sJVIocmrJDBDM6UNPdLk.JhijKte8HxHkf0-1762372716-1.0.1.1-7x6xNnyZJYHdVZfqla3CxNQuXsVNMTdt3nVGYUkzuS090prxItAUftrBcY5qad5axudyfkplDjhswMmtsAgc2BvdGVnIyLcfZ_R2hhBjrG0;
+        path=/; expires=Wed, 05-Nov-25 20:28:36 GMT; domain=.api.openai.com; HttpOnly;
+        Secure; SameSite=None
+      - _cfuvid=8w2cwROHSt4C1lb_jAQzNZKp5KUmku7FNt7RnLSoAEY-1762372716618-0.0.1.1-604800000;
+        path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '1453'
+      x-ratelimit-limit-requests: '10000'
+      x-ratelimit-limit-tokens: '30000000'
+      x-ratelimit-remaining-requests: '9999'
+      x-ratelimit-remaining-tokens: '29999921'
+      x-ratelimit-reset-requests: 6ms
+      x-ratelimit-reset-tokens: 0s
+      x-request-id: req_014946fdefc243d2a1ed1ff7ed335618
+    body:
+      string: |-
+        {
+          "id": "resp_0c8ac4f7ecf7697001690bac6b2ef081948009a0cecc19ea58",
+          "object": "response",
+          "created_at": 1762372715,
+          "status": "completed",
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "error": null,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-4.1-2025-04-14",
+          "output": [
+            {
+              "id": "msg_0c8ac4f7ecf7697001690bac6c65948194beded2881d2f2ac6",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\"name\":\"Robert\",\"age\":51}"
+                }
+              ],
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": null,
+          "reasoning": {
+            "effort": null,
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "json_schema",
+              "description": null,
+              "name": "structured_data",
+              "schema": {
+                "type": "object",
+                "description": "",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": ""
+                  },
+                  "age": {
+                    "type": "number",
+                    "description": ""
+                  }
+                },
+                "required": [
+                  "name",
+                  "age"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 60,
+            "input_tokens_details": {
+              "cached_tokens": 0
+            },
+            "output_tokens": 10,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 70
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: 2025-11-05 19:58:36
+- request:
+    method: POST
+    uri: https://api.openai.com/v1/responses
+    body:
+      string: '{"input":[{"role":"user","content":[{"type":"input_text","text":"Kwame
+        here - just hit the big 5-0 this year."}]}],"model":"gpt-4.1","stream":false,"text":{"format":{"type":"json_schema","name":"structured_data","schema":{"type":"object","description":"","properties":{"name":{"type":"string","description":""},"age":{"type":"number","description":""}},"required":["name","age"],"additionalProperties":false},"strict":true}},"store":false,"service_tier":"auto"}'
+  response:
+    status: 200
+    headers:
+      alt-svc: h3=":443"; ma=86400
+      cf-cache-status: DYNAMIC
+      cf-ray: 999eed4719f53458-DFW
+      content-encoding: gzip
+      content-type: application/json
+      date: Wed, 05 Nov 2025 19:58:39 GMT
+      openai-organization: posit-esfrkf
+      openai-processing-ms: '2467'
+      openai-project: proj_IeWhBnzvOO8wbVR5MdxnGXFq
+      openai-version: '2020-10-01'
+      server: cloudflare
+      set-cookie:
+      - __cf_bm=_j_26E9eMH.ANza_tSQvEUZ23Sy3uF2NYR1vH4gHf60-1762372719-1.0.1.1-5Sq6wiPZpaovH6RvBXfmefeyvo.eGXny7kxDY2CBJH_MupzjNBYaBo1ZZy1H5j9WLxMG6jqCigHyUhz8I964xoDeAgkADoDHjveMAf_g.cQ;
+        path=/; expires=Wed, 05-Nov-25 20:28:39 GMT; domain=.api.openai.com; HttpOnly;
+        Secure; SameSite=None
+      - _cfuvid=TuG7.qASaZiUSBiKuR9zEOwdmMVrAcLW1TwPKc1NU_8-1762372719186-0.0.1.1-604800000;
+        path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '2473'
+      x-ratelimit-limit-requests: '10000'
+      x-ratelimit-limit-tokens: '30000000'
+      x-ratelimit-remaining-requests: '9999'
+      x-ratelimit-remaining-tokens: '29999920'
+      x-ratelimit-reset-requests: 6ms
+      x-ratelimit-reset-tokens: 0s
+      x-request-id: req_c15567cac20147c9b12ef391292ee605
+    body:
+      string: |-
+        {
+          "id": "resp_01671b60a91cdcfa01690bac6cb9708197a451f0e3efb6146a",
+          "object": "response",
+          "created_at": 1762372716,
+          "status": "completed",
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "error": null,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-4.1-2025-04-14",
+          "output": [
+            {
+              "id": "msg_01671b60a91cdcfa01690bac6ef35c81979a638c7acfd27972",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\"name\":\"Kwame\",\"age\":50}"
+                }
+              ],
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": null,
+          "reasoning": {
+            "effort": null,
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": false,
+          "temperature": 1.0,
+          "text": {
+            "format": {
+              "type": "json_schema",
+              "description": null,
+              "name": "structured_data",
+              "schema": {
+                "type": "object",
+                "description": "",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": ""
+                  },
+                  "age": {
+                    "type": "number",
+                    "description": ""
+                  }
+                },
+                "required": [
+                  "name",
+                  "age"
+                ],
+                "additionalProperties": false
+              },
+              "strict": true
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 1.0,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 61,
+            "input_tokens_details": {
+              "cached_tokens": 0
+            },
+            "output_tokens": 11,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 72
+          },
+          "user": null,
+          "metadata": {}
+        }
+  recorded_at: 2025-11-05 19:58:39
+recorded_with: VCR-vcr/2.0.0

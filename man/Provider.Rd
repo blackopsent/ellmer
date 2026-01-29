@@ -9,7 +9,9 @@ Provider(
   model = stop("Required"),
   base_url = stop("Required"),
   params = list(),
-  extra_args = list()
+  extra_args = list(),
+  extra_headers = character(0),
+  credentials = function() NULL
 )
 }
 \arguments{
@@ -22,6 +24,12 @@ Provider(
 \item{params}{A list of standard parameters created by \code{\link[=params]{params()}}.}
 
 \item{extra_args}{Arbitrary extra arguments to be included in the request body.}
+
+\item{extra_headers}{Arbitrary extra headers to be added to the request.}
+
+\item{credentials}{A zero-argument function that returns the credentials to use
+for authentication. Can either return a string, representing an API key,
+or a named list of headers.}
 }
 \value{
 An S7 Provider object.

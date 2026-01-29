@@ -1,5 +1,6 @@
 #' @include utils-S7.R
 #' @include types.R
+#' @include ellmer-package.R
 NULL
 
 #' Define a tool
@@ -63,7 +64,8 @@ NULL
 #'   Generally, the more information that you can provide here, the better.
 #' @param arguments A named list that defines the arguments accepted by the
 #'   function. Each element should be created by a [`type_*()`][type_boolean]
-#'   function (or `NULL` if you don't want the LLM to use that argument).
+#'   function. Use [type_ignore()] if you don't want the LLM to provide that
+#'   argument (e.g., because the R function has a suitable default value).
 #' @param annotations Additional properties that describe the tool and its
 #'   behavior. Usually created by [tool_annotations()], where you can find a
 #'   description of the annotation properties recommended by the [Model Context
@@ -101,7 +103,7 @@ NULL
 #' # Look at the chat history to see how tool calling works:
 #' chat
 #' # Assistant sends a tool request which is evaluated locally and
-#' # results are send back in a tool result.
+#' # results are sent back in a tool result.
 #'
 #' \dontshow{ellmer:::vcr_example_end()}
 #' @family tool calling helpers
@@ -149,7 +151,7 @@ tool <- function(
     annotations <- .annotations
   }
 
-  fun_expr <- enexpr(fun)
+  fun_expr <- substitute(fun)
   check_function(fun)
   check_string(description)
   check_string(name, allow_null = TRUE)
@@ -162,14 +164,20 @@ tool <- function(
       name <- unique_tool_name()
     }
   }
+  if (!grepl("^[a-zA-Z0-9_-]+$", name)) {
+    cli::cli_abort("{.arg name} must contain only letters, numbers, - and _.")
+  }
 
   check_arguments(arguments, formals(fun))
+
+  # Filter out TypeIgnore arguments - they should not be sent to the LLM
+  llm_arguments <- arguments[!map_lgl(arguments, S7_inherits, TypeIgnore)]
 
   ToolDef(
     fun,
     name = name,
     description = description,
-    arguments = TypeObject(properties = arguments),
+    arguments = TypeObject(properties = llm_arguments),
     convert = convert,
     annotations = annotations
   )
@@ -186,6 +194,19 @@ ToolDef <- new_class(
     annotations = class_list
   )
 )
+
+method(print, ToolDef) <- function(x, ...) {
+  fake_call <- call2(x@name, !!!syms(names(x@arguments@properties)))
+
+  cat_line("# <ellmer::ToolDef> ", deparse1(fake_call))
+  cat_line("# @name: ", x@name)
+  cat_line("# @description: ", x@description)
+  cat_line("# @convert: ", x@convert)
+  cat_line("#")
+  print(S7_data(x))
+
+  invisible(x)
+}
 
 check_arguments <- function(arguments, formals, call = caller_env()) {
   if (!is.list(arguments) || !(length(arguments) == 0 || is_named(arguments))) {
@@ -211,10 +232,10 @@ check_arguments <- function(arguments, formals, call = caller_env()) {
 
   for (nm in names(arguments)) {
     arg <- arguments[[nm]]
-    if (!is.null(arg) && !S7_inherits(arg, Type)) {
+    if (!S7_inherits(arg, Type)) {
       stop_input_type(
         arg,
-        c("a <Type>", "NULL"),
+        "a <Type>",
         arg = paste0("arguments$", nm),
         call = call
       )
@@ -222,6 +243,21 @@ check_arguments <- function(arguments, formals, call = caller_env()) {
   }
 
   invisible()
+}
+
+check_tool <- function(x, arg = caller_arg(x), call = caller_env()) {
+  if (!S7_inherits(x, ToolDef) && !S7_inherits(x, ToolBuiltIn)) {
+    stop_input_type(x, "a <ToolDef>", arg = arg, call = call)
+  }
+}
+
+check_tools <- function(x, arg = caller_arg(x), call = caller_env()) {
+  if (!is_list(x)) {
+    stop_input_type(x, "a list", arg = arg, call = call)
+  }
+  for (i in seq_along(x)) {
+    check_tool(x[[i]], arg = paste0(arg, "[[", i, "]]"), call = call)
+  }
 }
 
 #' Tool annotations
@@ -401,7 +437,7 @@ tool_reject <- function(
 ) {
   check_string(reason)
 
-  rlang::abort(
+  abort(
     paste("Tool call rejected.", reason),
     class = "ellmer_tool_reject"
   )

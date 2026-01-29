@@ -27,11 +27,12 @@ Authors:
   \item Joe Cheng
   \item Aaron Jacobs
   \item Garrick Aden-Buie \email{garrick@posit.co} (\href{https://orcid.org/0000-0002-7111-0077}{ORCID})
+  \item Barret Schloerke \email{barret@posit.co} (\href{https://orcid.org/0000-0001-9986-114X}{ORCID})
 }
 
 Other contributors:
 \itemize{
-  \item Posit Software, PBC (03wc8by49) [copyright holder, funder]
+  \item Posit Software, PBC (\href{https://ror.org/03wc8by49}{ROR}) [copyright holder, funder]
 }
 
 }

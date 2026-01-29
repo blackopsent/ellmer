@@ -1,3 +1,17 @@
+# tools have a print method
+
+    Code
+      f
+    Output
+      # <ellmer::ToolDef> my_fun(x, y)
+      # @name: my_fun
+      # @description: a simple function
+      # @convert: TRUE
+      #
+      function(x = 1, y = 2) {
+          x + y
+        }
+
 # old arguments are deprecated
 
     Code
@@ -38,6 +52,11 @@
       Error in `tool()`:
       ! `name` must be a single string or `NULL`, not the number 1.
     Code
+      tool(identity, "", name = "...")
+    Condition
+      Error in `tool()`:
+      ! `name` must contain only letters, numbers, - and _.
+    Code
       tool(identity, "", arguments = 1)
     Condition
       Error in `tool()`:
@@ -61,7 +80,25 @@
       tool(fun, "", arguments = list(x = type_number(), y = 1))
     Condition
       Error in `tool()`:
-      ! `arguments$y` must be a <Type> or NULL, not the number 1.
+      ! `arguments$y` must be a <Type>, not the number 1.
+
+# can check tool/tools
+
+    Code
+      check_tool(1)
+    Condition
+      Error:
+      ! `1` must be a <ToolDef>, not the number 1.
+    Code
+      check_tools(1)
+    Condition
+      Error:
+      ! `1` must be a list, not the number 1.
+    Code
+      check_tools(x)
+    Condition
+      Error:
+      ! `x[[1]]` must be a <ToolDef>, not the number 1.
 
 # tool_annotations(): checks its inputs
 

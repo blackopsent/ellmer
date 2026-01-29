@@ -3,6 +3,21 @@ test_that("can call tools directory", {
   expect_equal(f(), 1)
 })
 
+test_that("tools have a print method", {
+  fun <- function(x = 1, y = 2) {
+    x + y
+  }
+  environment(fun) <- globalenv()
+
+  f <- tool(
+    fun,
+    name = "my_fun",
+    arguments = list(x = type_string(), y = type_number()),
+    description = "a simple function"
+  )
+  expect_snapshot(f)
+})
+
 test_that("tool can get name", {
   f <- function() {}
   td <- tool(f, description = "")
@@ -52,6 +67,7 @@ test_that("checks its arguments", {
     tool(1)
     tool(identity, 1)
     tool(identity, "", name = 1)
+    tool(identity, "", name = "...")
     tool(identity, "", arguments = 1)
     tool(identity, "", convert = 1)
   })
@@ -66,6 +82,46 @@ test_that("arguments must match function formals", {
   })
 })
 
+test_that("type_ignore() filters out arguments from LLM", {
+  td <- tool(
+    \(x, y = 10) x + y,
+    description = "Add two numbers",
+    arguments = list(
+      x = type_number("First number"),
+      y = type_ignore()
+    )
+  )
+
+  # The tool definition should not include y in its arguments
+  expect_equal(names(td@arguments@properties), "x")
+  # But the function should still work with the default
+  expect_equal(td(x = 5), 15)
+})
+
+test_that("type_ignore() works with all arguments ignored", {
+  td <- tool(
+    \(x = 1, y = 2) x + y,
+    description = "Add with defaults",
+    arguments = list(
+      x = type_ignore(),
+      y = type_ignore()
+    )
+  )
+
+  # No arguments should be sent to LLM
+  expect_equal(length(td@arguments@properties), 0)
+  # Function should still work
+  expect_equal(td(), 3)
+})
+
+test_that("can check tool/tools", {
+  x <- list(1)
+  expect_snapshot(error = TRUE, {
+    check_tool(1)
+    check_tools(1)
+    check_tools(x)
+  })
+})
 
 # tool_annotations() -------------------------------------------------------
 

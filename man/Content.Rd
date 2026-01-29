@@ -26,14 +26,19 @@ ContentToolRequest(
   id = stop("Required"),
   name = stop("Required"),
   arguments = list(),
-  tool = NULL
+  tool = NULL,
+  extra = list()
 )
 
 ContentToolResult(value = NULL, error = NULL, extra = list(), request = NULL)
 
 ContentThinking(thinking = stop("Required"), extra = list())
 
-ContentPDF(type = stop("Required"), data = stop("Required"))
+ContentPDF(
+  type = stop("Required"),
+  data = stop("Required"),
+  filename = stop("Required")
+)
 }
 \arguments{
 \item{text}{A single string.}
@@ -56,18 +61,20 @@ Automatically managed by \pkg{ellmer}.}
 \item{tool}{ellmer automatically matches a tool request to the tools defined
 for the chatbot. If \code{NULL}, the request did not match a defined tool.}
 
+\item{extra}{Additional data.}
+
 \item{value}{The results of calling the tool function, if it succeeded.}
 
 \item{error}{The error message, as a string, or the error condition thrown
 as a result of a failure when calling the tool function. Must be \code{NULL}
 when the tool call is successful.}
 
-\item{extra}{Additional data.}
-
 \item{request}{The \link{ContentToolRequest} associated with the tool result,
 automatically added by \pkg{ellmer} when evaluating the tool call.}
 
 \item{thinking}{The text of the thinking output.}
+
+\item{filename}{File name, used to identify the PDF.}
 }
 \value{
 S7 objects that all inherit from \code{Content}

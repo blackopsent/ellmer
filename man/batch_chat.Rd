@@ -2,11 +2,14 @@
 % Please edit documentation in R/batch-chat.R
 \name{batch_chat}
 \alias{batch_chat}
+\alias{batch_chat_text}
 \alias{batch_chat_structured}
 \alias{batch_chat_completed}
 \title{Submit multiple chats in one batch}
 \usage{
-batch_chat(chat, prompts, path, wait = TRUE)
+batch_chat(chat, prompts, path, wait = TRUE, ignore_hash = FALSE)
+
+batch_chat_text(chat, prompts, path, wait = TRUE, ignore_hash = FALSE)
 
 batch_chat_structured(
   chat,
@@ -14,6 +17,7 @@ batch_chat_structured(
   path,
   type,
   wait = TRUE,
+  ignore_hash = FALSE,
   convert = TRUE,
   include_tokens = FALSE,
   include_cost = FALSE
@@ -22,7 +26,8 @@ batch_chat_structured(
 batch_chat_completed(chat, prompts, path)
 }
 \arguments{
-\item{chat}{A base chat object.}
+\item{chat}{A chat object created by a \code{chat_} function, or a
+string passed to \code{\link[=chat]{chat()}}.}
 
 \item{prompts}{A vector created by \code{\link[=interpolate]{interpolate()}} or a list
 of character vectors.}
@@ -37,6 +42,10 @@ different, you'll get an error.}
 it will return \code{NULL} if the batch is not complete, and you can retrieve
 the results later by re-running \code{batch_chat()} when
 \code{batch_chat_completed()} is \code{TRUE}.}
+
+\item{ignore_hash}{If \code{TRUE}, will only warn rather than error when the hash
+doesn't match. You can use this if ellmer has changed the hash structure
+and you're confident that you're reusing the same inputs.}
 
 \item{type}{A type specification for the extracted data. Should be
 created with a \code{\link[=type_boolean]{type_()}} function.}
@@ -53,13 +62,22 @@ and output tokens for each prompt.}
 \item{include_cost}{If \code{TRUE}, and the result is a data frame, will
 add \code{cost} column giving the cost of each prompt.}
 }
-\description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+\value{
+For \code{batch_chat()}, a list of \link{Chat} objects, one for each prompt.
+For \code{batch_chat_test()}, a character vector of text responses.
+For \code{batch_chat_structured()}, a single structured data object with one
+element for each prompt. Typically, when \code{type} is an object, this will
+will be a data frame with one row for each prompt, and one column for each
+property.
 
+For any of the aboves, will return \code{NULL} if \code{wait = FALSE} and the job
+is not complete.
+}
+\description{
 \code{batch_chat()} and \code{batch_chat_structured()} currently only work with
 \code{\link[=chat_openai]{chat_openai()}} and \code{\link[=chat_anthropic]{chat_anthropic()}}. They use the
 \href{https://platform.openai.com/docs/guides/batch}{OpenAI} and
-\href{https://docs.anthropic.com/en/docs/build-with-claude/batch-processing}{Anthropic}
+\href{https://docs.claude.com/en/docs/build-with-claude/batch-processing}{Anthropic}
 batch APIs which allow you to submit multiple requests simultaneously.
 The results can take up to 24 hours to complete, but in return you pay 50\%
 less than usual (but note that ellmer doesn't include this discount in
@@ -81,7 +99,7 @@ errors in the most helpful way. Fortunately they don't seem to be common,
 but if you have ideas, please let me know!
 }
 \examples{
-\dontshow{if (has_credentials("openai")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (has_credentials("openai")) withAutoprint(\{ # examplesIf}
 chat <- chat_openai(model = "gpt-4.1-nano")
 
 # Chat ----------------------------------------------------------------------

@@ -5,11 +5,12 @@ chat_perform <- function(
   provider,
   mode = c("value", "stream", "async-stream", "async-value"),
   turns,
-  tools = list(),
+  tools = NULL,
   type = NULL
 ) {
   mode <- arg_match(mode)
   stream <- mode %in% c("stream", "async-stream")
+  tools <- tools %||% list()
 
   req <- chat_request(
     provider = provider,
@@ -21,15 +22,11 @@ chat_perform <- function(
 
   switch(
     mode,
-    "value" = chat_perform_value(provider, req),
+    "value" = req_perform(req),
     "stream" = chat_perform_stream(provider, req),
-    "async-value" = chat_perform_async_value(provider, req),
+    "async-value" = req_perform_promise(req),
     "async-stream" = chat_perform_async_stream(provider, req)
   )
-}
-
-chat_perform_value <- function(provider, req) {
-  resp_body_json(req_perform(req))
 }
 
 on_load(
@@ -49,10 +46,6 @@ on_load(
   })
 )
 
-chat_perform_async_value <- function(provider, req) {
-  promises::then(req_perform_promise(req), resp_body_json)
-}
-
 on_load(
   chat_perform_async_stream <- coro::async_generator(function(provider, req) {
     resp <- req_perform_connection(req, blocking = FALSE)
@@ -60,8 +53,8 @@ on_load(
 
     repeat {
       event <- chat_resp_stream(provider, resp)
-      if (is.null(event) && isIncomplete(resp$body)) {
-        fds <- curl::multi_fdset(resp$body)
+      if (is.null(event) && !resp_stream_is_complete(resp)) {
+        fds <- resp$body$get_fdset()
         await(promises::promise(function(resolve, reject) {
           later::later_fd(
             resolve,
@@ -98,12 +91,6 @@ ellmer_req_robustify <- function(req, is_transient = NULL, after = NULL) {
   )
 
   req
-}
-
-ellmer_req_credentials <- function(req, credentials_fun) {
-  # TODO: simplify once req_headers_redacted() supports !!!
-  credentials <- credentials_fun()
-  req_headers(req, !!!credentials, .redact = names(credentials))
 }
 
 ellmer_req_user_agent <- function(req, override = "") {

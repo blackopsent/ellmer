@@ -15,21 +15,12 @@ test_that("can create content from a vector", {
 })
 
 test_that("turn contents can be converted to text, markdown and HTML", {
-  turn <- Turn(
-    "user",
+  turn <- UserTurn(
     contents = list(
       ContentText("User input."),
       ContentImageInline("image/png", "abcd123"),
       ContentImageRemote("https://example.com/image.jpg", detail = ""),
-      ContentJson(list(a = 1:2, b = "apple")),
-      ContentSql("SELECT * FROM mtcars"),
-      ContentSuggestions(
-        c(
-          "What is the total quantity sold for each product last quarter?",
-          "What is the average discount percentage for orders from the United States?",
-          "What is the average price of products in the 'electronics' category?"
-        )
-      )
+      ContentJson(list(a = 1:2, b = "apple"))
     )
   )
 
@@ -38,7 +29,7 @@ test_that("turn contents can be converted to text, markdown and HTML", {
 
   turns <- list(
     turn,
-    Turn("assistant", list(ContentText("Here's your answer.")))
+    AssistantTurn(list(ContentText("Here's your answer.")))
   )
   chat <- Chat$new(test_provider())
   chat$set_turns(turns)
@@ -60,6 +51,35 @@ test_that("thinking has useful representations", {
     "<thinking>\nA **thought**.\n</thinking>\n"
   )
   expect_snapshot(cat(contents_html(ct)))
+})
+
+test_that("ContentToolRequest shows converted arguments", {
+  my_tool <- tool(
+    function(x, y, z) {},
+    name = "my_tool",
+    description = "A tool",
+    arguments = list(
+      x = type_array(type_number()),
+      y = type_array(type_string()),
+      z = type_enum(c("a", "b", "c"))
+    )
+  )
+  content <- ContentToolRequest(
+    "id",
+    name = "my_tool",
+    arguments = list(x = c(1, 2), y = c("a", "b"), z = "a"),
+    tool = my_tool
+  )
+  expect_snapshot(cat(format(content)))
+
+  # and very long arguments are truncated
+  content <- ContentToolRequest(
+    "id",
+    name = "my_tool",
+    arguments = list(x = rep(123, 1000), y = c("a", "b"), z = "a"),
+    tool = my_tool
+  )
+  expect_snapshot(cat(format(content)))
 })
 
 test_that("ContentToolResult@error requires a string or an error condition", {
